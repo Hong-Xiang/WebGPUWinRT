@@ -1,6 +1,25 @@
 # Prerequisites
 *.d
 
+# Build directories
+build/
+out/
+
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.sln
+*.vcxproj
+*.vcxproj.filters
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+Makefile
+*.make
+
 # Compiled Object files
 *.slo
 *.lo
@@ -39,3 +58,5 @@
 
 # debug information files
 *.dwo
+
+WebGPU-distribution
