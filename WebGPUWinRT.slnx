@@ -1,0 +1,15 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="WebGPUWinRT/WebGPUWinRT.vcxproj" Id="b683e238-d6f0-46f8-9426-282cce78e534" />
+  <Project Path="WebGPUWinRT.Projection/WebGPUWinRT.Projection.csproj" Id="ece60293-d3fb-40d2-943e-897e3ea675cd">
+    <Platform Solution="Debug|x64" Project="x64" />
+  </Project>
+  <Project Path="WebGPUUsageTest/WebGPUUsageTest.csproj" Id="4a7005b6-b28f-4c19-a533-897e67c5727a">
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="Debug|Any CPU" Project="x64" />
+  </Project>
+
+</Solution>

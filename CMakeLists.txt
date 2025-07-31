@@ -1,55 +1,60 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(WebGPUWinRT VERSION 1.0.0 LANGUAGES CXX)
+project(WebGPUWinRT VERSION 1.0.0)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Set install prefix to extern/webgpu in current directory
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/extern/webgpu" CACHE PATH "Install path prefix")
+
+# Configure WebGPU backend to use DAWN
+set(WEBGPU_BACKEND "WGPU" CACHE STRING "Backend implementation of WebGPU")
+set(WEBGPU_BUILD_FROM_SOURCE OFF CACHE BOOL "Build from source")
+set(WEBGPU_LINK_TYPE "SHARED" CACHE STRING "Link type for WebGPU")
 
 # Add WebGPU-distribution as subdirectory
-add_subdirectory(WebGPU-distribution)
+add_subdirectory(./WebGPU-distribution)
 
-# Create your main library
-add_library(WebGPUWinRT STATIC)
+add_library(WebGPUWinRT src/lib.cpp)
+target_link_libraries(WebGPUWinRT PRIVATE webgpu)
+target_copy_webgpu_binaries(WebGPUWinRT)
 
-# Add source files
-target_sources(WebGPUWinRT
-    PRIVATE
-        src/WebGPUDevice.cpp
+# Install library
+install(TARGETS WebGPUWinRT
+    EXPORT WebGPUWinRTTargets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include
 )
 
-# Link against WebGPU
-target_link_libraries(WebGPUWinRT 
-    PUBLIC 
-        webgpu
+# Install headers
+install(DIRECTORY include/
+    DESTINATION include
+    FILES_MATCHING PATTERN "*.h"
 )
 
-# Include directories
-target_include_directories(WebGPUWinRT
-    PUBLIC
-        include
-    PRIVATE
-        src
+# Install export targets
+install(EXPORT WebGPUWinRTTargets
+    FILE WebGPUWinRTTargets.cmake
+    NAMESPACE WebGPUWinRT::
+    DESTINATION lib/cmake/WebGPUWinRT
 )
 
-# Set target properties for Windows
-if(WIN32)
-    target_compile_definitions(WebGPUWinRT PRIVATE 
-        NOMINMAX
-        WIN32_LEAN_AND_MEAN
-    )
-endif()
+# Create and install config file
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    WebGPUWinRTConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
 
-# Optional: Create an example executable
-option(BUILD_EXAMPLES "Build example applications" ON)
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/WebGPUWinRTConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/WebGPUWinRTConfig.cmake
+    INSTALL_DESTINATION lib/cmake/WebGPUWinRT
+)
 
-if(BUILD_EXAMPLES)
-    add_subdirectory(examples)
-endif()
-
-# Optional: Create tests
-option(BUILD_TESTS "Build tests" OFF)
-
-if(BUILD_TESTS)
-    add_subdirectory(tests)
-endif()
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/WebGPUWinRTConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/WebGPUWinRTConfigVersion.cmake
+    DESTINATION lib/cmake/WebGPUWinRT
+)

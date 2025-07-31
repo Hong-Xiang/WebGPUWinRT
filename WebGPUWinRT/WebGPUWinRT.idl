@@ -1,0 +1,49 @@
+namespace WebGPUWinRT
+{
+    struct GPUSupportedLimits {
+        UInt32 maxTextureDimension1D;
+        UInt32 maxTextureDimension2D;
+        UInt32 maxTextureDimension3D;
+        UInt32 maxTextureArrayLayers;
+        UInt32 maxBindGroups;
+        UInt32 maxBindGroupsPlusVertexBuffers;
+        UInt32 maxBindingsPerBindGroup;
+        UInt32 maxDynamicUniformBuffersPerPipelineLayout;
+        UInt32 maxDynamicStorageBuffersPerPipelineLayout;
+        UInt32 maxSampledTexturesPerShaderStage;
+        UInt32 maxSamplersPerShaderStage;
+        UInt32 maxStorageBuffersPerShaderStage;
+        UInt32 maxStorageTexturesPerShaderStage;
+        UInt32 maxUniformBuffersPerShaderStage;
+        UInt64 maxUniformBufferBindingSize;
+        UInt64 maxStorageBufferBindingSize;
+        UInt32 minUniformBufferOffsetAlignment;
+        UInt32 minStorageBufferOffsetAlignment;
+        UInt32 maxVertexBuffers;
+        UInt64 maxBufferSize;
+        UInt32 maxVertexAttributes;
+        UInt32 maxVertexBufferArrayStride;
+        UInt32 maxInterStageShaderVariables;
+        UInt32 maxColorAttachments;
+        UInt32 maxColorAttachmentBytesPerSample;
+        UInt32 maxComputeWorkgroupStorageSize;
+        UInt32 maxComputeInvocationsPerWorkgroup;
+        UInt32 maxComputeWorkgroupSizeX;
+        UInt32 maxComputeWorkgroupSizeY;
+        UInt32 maxComputeWorkgroupSizeZ;
+        UInt32 maxComputeWorkgroupsPerDimension;
+    };
+
+    [default_interface]
+    runtimeclass GPUAdapter
+    {
+        GPUSupportedLimits Limits { get; };
+    }
+
+    [default_interface]
+    runtimeclass GPU
+    {
+        GPU();
+	    GPUAdapter RequestAdapter();
+    }
+}

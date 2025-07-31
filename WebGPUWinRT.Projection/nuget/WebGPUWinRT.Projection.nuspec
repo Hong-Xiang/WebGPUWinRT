@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+	<metadata>
+		<id>WebGPUWinRT</id>
+		<version>0.0.7-prerelease</version>
+		<authors>Xiang</authors>
+		<description>A WinRT Wrapper for WebGPUNative</description>
+		<dependencies>
+			<group targetFramework="net8.0-windows10.0.19041.0" />
+		</dependencies>
+	</metadata>
+	<files>
+		<!--Support .NET 6, .NET Core 3, UAP, .NET Framework 4.6, C++ -->
+		<!--Architecture-neutral assemblies-->
+		<file src="..\..\build\AnyCPU\Release\WebGPUWinRT.Projection\bin\WebGPUWinRT.Projection.dll" target="lib\net8.0-windows10.0.19041.0\WebGPUWinRT.Projection.dll" />
+		<!--Architecture-specific implementation DLLs should be copied into RID-relative folders-->
+		<file src="..\..\build\x64\Release\WebGPUWinRT\bin\WebGPUWinRT\WebGPUWinRT.dll" target="runtimes\win-x64\native\WebGPUWinRT.dll" />
+		<file src="..\..\build\x64\Release\WebGPUWinRT\bin\WebGPUWinRT\wgpu_native.dll" target="runtimes\win-x64\native\wgpu_native.dll" />
+		<!--To support x86 and Arm64, build SimpleMathComponent for those other architectures and uncomment the entries below.-->
+		<!--<file src="..\..\_build\Win32\Release\SimpleMathComponent\bin\SimpleMathComponent\SimpleMathComponent.dll" target="runtimes\win10-x86\native\SimpleMathComponent.dll" />-->
+		<!--<file src="..\..\_build\arm64\Release\SimpleMathComponent\bin\SimpleMathComponent\SimpleMathComponent.dll" target="runtimes\win10-arm64\native\SimpleMathComponent.dll" />-->
+	</files>
+</package>

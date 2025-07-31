@@ -8,9 +8,6 @@ out/
 # Visual Studio
 .vs/
 *.vcxproj.user
-*.sln
-*.vcxproj
-*.vcxproj.filters
 
 # CMake
 CMakeCache.txt
@@ -60,3 +57,13 @@ Makefile
 *.dwo
 
 WebGPU-distribution
+wgpu-native/
+Generated Files/
+x64/
+packages/
+
+*.pfx
+*.nupkg
+
+obj/
+build/

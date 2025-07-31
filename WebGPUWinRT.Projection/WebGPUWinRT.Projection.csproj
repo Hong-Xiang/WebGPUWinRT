@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<CsWinRTIncludes>WebGPUWinRT</CsWinRTIncludes>
+		<CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
+		<Platforms>AnyCPU;x64</Platforms>
+		<GeneratedNugetDir>.\nuget\</GeneratedNugetDir>
+		<NuspecFile>$(GeneratedNugetDir)WebGPUWinRT.Projection.nuspec</NuspecFile>
+		<OutputPath>$(GeneratedNugetDir)</OutputPath>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\WebGPUWinRT\WebGPUWinRT.vcxproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="nuget\WebGPUWinRT.Projection.nuspec" />
+	</ItemGroup>
+
+</Project>

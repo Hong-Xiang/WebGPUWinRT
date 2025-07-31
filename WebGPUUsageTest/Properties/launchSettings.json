@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WebGPUUsageTest": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
