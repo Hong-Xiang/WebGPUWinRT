@@ -34,16 +34,38 @@ namespace WebGPUWinRT
         UInt32 maxComputeWorkgroupsPerDimension;
     };
 
-    [default_interface]
-    runtimeclass GPUAdapter
+    enum GPUFeature {
+        Undefined = 0x00000000,
+        DepthClipControl = 0x00000001,
+        Depth32FloatStencil8 = 0x00000002,
+        TimestampQuery = 0x00000003,
+        TextureCompressionBC = 0x00000004,
+        TextureCompressionBCSliced3D = 0x00000005,
+        TextureCompressionETC2 = 0x00000006,
+        TextureCompressionASTC = 0x00000007,
+        TextureCompressionASTCSliced3D = 0x00000008,
+        IndirectFirstInstance = 0x00000009,
+        ShaderF16 = 0x0000000A,
+        RG11B10UfloatRenderable = 0x0000000B,
+        BGRA8UnormStorage = 0x0000000C,
+        Float32Filterable = 0x0000000D,
+        Float32Blendable = 0x0000000E,
+        ClipDistances = 0x0000000F,
+        DualSourceBlending = 0x00000010,
+        // Force32 = 0x7FFFFFFF
+    };
+
+    interface IGPUAdapter
     {
         GPUSupportedLimits Limits { get; };
+        IVectorView<GPUFeature> Features{ get; };
     }
+
 
     [default_interface]
     runtimeclass GPU
     {
         GPU();
-	    GPUAdapter RequestAdapter();
+	    IGPUAdapter RequestAdapter();
     }
 }

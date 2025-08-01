@@ -12,7 +12,7 @@ namespace winrt::WebGPUWinRT::implementation
 		handle = wgpuCreateInstance(&desc);
 	}
 
-	winrt::WebGPUWinRT::GPUAdapter GPU::RequestAdapter()
+	winrt::WebGPUWinRT::IGPUAdapter GPU::RequestAdapter()
 	{
 		return make<implementation::GPUAdapter>(*this);
 	}

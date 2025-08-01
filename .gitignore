@@ -67,3 +67,5 @@ packages/
 
 obj/
 build/
+
+.vscode/

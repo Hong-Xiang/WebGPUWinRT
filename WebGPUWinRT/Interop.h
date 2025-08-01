@@ -2,5 +2,7 @@
 #include <string>
 
 namespace interop {
-	std::string to_string(WGPUStringView wgpu_string_view);
+	std::string to(WGPUStringView wgpu_string_view);
+	winrt::WebGPUWinRT::GPUFeature to(WGPUFeatureName feature);
+	winrt::WebGPUWinRT::GPUSupportedLimits to(WGPULimits limits);
 } // namespace interop

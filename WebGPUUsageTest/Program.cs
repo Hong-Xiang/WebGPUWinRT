@@ -14,6 +14,10 @@ internal class Program
         var option = new JsonSerializerOptions(JsonSerializerOptions.Default);
         option.IncludeFields = true;
         Console.WriteLine(JsonSerializer.Serialize(limits, option));
+        foreach (var feature in adaptor.Features)
+        {
+            Console.WriteLine($"{feature} : {Enum.GetName(feature)}");
+        }
     }
     static void Main(string[] args)
     {

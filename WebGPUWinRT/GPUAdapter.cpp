@@ -1,16 +1,14 @@
 #include "pch.h"
 #include "GPUAdapter.h"
-#include "GPUAdapter.g.cpp"
 #include <iostream>
 #include "Interop.h"
 
+
 namespace winrt::WebGPUWinRT::implementation
 {
-	GPUAdapter::GPUAdapter(const implementation::GPU& gpu) : m_gpu(gpu), handle(nullptr) {
-		RequestAdapterInternal();
-	}
+	using namespace winrt;
 
-	void GPUAdapter::RequestAdapterInternal() {
+	GPUAdapter::GPUAdapter(const implementation::GPU& gpu) : m_gpu(gpu), handle(nullptr) {
 		WGPURequestAdapterOptions adapterOpts = {};
 		adapterOpts.nextInChain = nullptr;
 
@@ -32,7 +30,7 @@ namespace winrt::WebGPUWinRT::implementation
 			};
 
 		wgpuInstanceRequestAdapter(
-			winrt::get_self<implementation::GPU>(m_gpu)->handle,
+			gpu.handle,
 			&adapterOpts,
 			{
 				.callback = onAdapterRequestEnded,
@@ -40,9 +38,7 @@ namespace winrt::WebGPUWinRT::implementation
 			}
 			);
 
-		// Wait for the request to complete (blocking)
 		while (!userData.requestEnded) {
-			// You might want to add a timeout or use a different synchronization mechanism
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 
@@ -52,45 +48,32 @@ namespace winrt::WebGPUWinRT::implementation
 		}
 	}
 
+	winrt::Windows::Foundation::Collections::IVectorView<WebGPUWinRT::GPUFeature> GPUAdapter::Features() const {
+		struct SupportedFeaturesWrapper {
+			WGPUSupportedFeatures data;
+			~SupportedFeaturesWrapper() {
+				wgpuSupportedFeaturesFreeMembers(data);
+			}
+		};
+		// TODO: unique_ptr wrapper?
+		SupportedFeaturesWrapper featuresWrapper{ };
+		wgpuAdapterGetFeatures(handle, &featuresWrapper.data);
+		std::vector<winrt::WebGPUWinRT::GPUFeature> features{ featuresWrapper.data.featureCount };
+		for (auto i = 0; i < featuresWrapper.data.featureCount; i++) {
+			features[i] = interop::to(featuresWrapper.data.features[i]);
+		}
+		return single_threaded_vector(std::move(features)).GetView();
+	}
+
 
 	winrt::WebGPUWinRT::GPUSupportedLimits GPUAdapter::Limits() const
 	{
+		WGPUAdapterInfo info = {};
+		wgpuAdapterGetInfo(handle, &info);
+
 		WGPULimits limits{};
 		wgpuAdapterGetLimits(handle, &limits);
-		auto result = GPUSupportedLimits{
-			.maxTextureDimension1D = limits.maxTextureDimension1D,
-			.maxTextureDimension2D = limits.maxTextureDimension2D,
-			.maxTextureDimension3D = limits.maxTextureDimension3D,
-			.maxTextureArrayLayers = limits.maxTextureArrayLayers,
-			.maxBindGroups = limits.maxBindGroups,
-			.maxBindGroupsPlusVertexBuffers = limits.maxBindGroupsPlusVertexBuffers,
-			.maxBindingsPerBindGroup = limits.maxBindingsPerBindGroup,
-			.maxDynamicUniformBuffersPerPipelineLayout = limits.maxDynamicUniformBuffersPerPipelineLayout,
-			.maxDynamicStorageBuffersPerPipelineLayout = limits.maxDynamicStorageBuffersPerPipelineLayout,
-			.maxSampledTexturesPerShaderStage = limits.maxSampledTexturesPerShaderStage,
-			.maxSamplersPerShaderStage = limits.maxSamplersPerShaderStage,
-			.maxStorageBuffersPerShaderStage = limits.maxStorageBuffersPerShaderStage,
-			.maxStorageTexturesPerShaderStage = limits.maxStorageTexturesPerShaderStage,
-			.maxUniformBuffersPerShaderStage = limits.maxUniformBuffersPerShaderStage,
-			.maxUniformBufferBindingSize = limits.maxUniformBufferBindingSize,
-			.maxStorageBufferBindingSize = limits.maxStorageBufferBindingSize,
-			.minUniformBufferOffsetAlignment = limits.minUniformBufferOffsetAlignment,
-			.minStorageBufferOffsetAlignment = limits.minStorageBufferOffsetAlignment,
-			.maxVertexBuffers = limits.maxVertexBuffers,
-			.maxBufferSize = limits.maxBufferSize,
-			.maxVertexAttributes = limits.maxVertexAttributes,
-			.maxVertexBufferArrayStride = limits.maxVertexBufferArrayStride,
-			.maxInterStageShaderVariables = limits.maxInterStageShaderVariables,
-			.maxColorAttachments = limits.maxColorAttachments,
-			.maxColorAttachmentBytesPerSample = limits.maxColorAttachmentBytesPerSample,
-			.maxComputeWorkgroupStorageSize = limits.maxComputeWorkgroupStorageSize,
-			.maxComputeInvocationsPerWorkgroup = limits.maxComputeInvocationsPerWorkgroup,
-			.maxComputeWorkgroupSizeX = limits.maxComputeWorkgroupSizeX,
-			.maxComputeWorkgroupSizeY = limits.maxComputeWorkgroupSizeY,
-			.maxComputeWorkgroupSizeZ = limits.maxComputeWorkgroupSizeZ,
-			.maxComputeWorkgroupsPerDimension = limits.maxComputeWorkgroupsPerDimension,
-		};
-		return result;
+		return interop::to(limits);
 	}
 
 	GPUAdapter::~GPUAdapter()

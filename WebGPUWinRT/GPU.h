@@ -1,13 +1,14 @@
 #pragma once
 #include "GPU.g.h"
 #include "webgpu/wgpu.h"
+#include "winrt/WebGPUWinRT.h"
 
 namespace winrt::WebGPUWinRT::implementation
 {
 	struct GPU : GPUT<GPU>
 	{
 		GPU();
-        winrt::WebGPUWinRT::GPUAdapter RequestAdapter();
+        winrt::WebGPUWinRT::IGPUAdapter RequestAdapter();
 
 		WGPUInstance handle{};
 		~GPU();
