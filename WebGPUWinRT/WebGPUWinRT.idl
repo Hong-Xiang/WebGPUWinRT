@@ -1,712 +1,931 @@
 namespace WebGPUWinRT
 {
-    struct GPUSupportedLimits {
-        UInt32 maxTextureDimension1D;
-        UInt32 maxTextureDimension2D;
-        UInt32 maxTextureDimension3D;
-        UInt32 maxTextureArrayLayers;
-        UInt32 maxBindGroups;
-        UInt32 maxBindGroupsPlusVertexBuffers;
-        UInt32 maxBindingsPerBindGroup;
-        UInt32 maxDynamicUniformBuffersPerPipelineLayout;
-        UInt32 maxDynamicStorageBuffersPerPipelineLayout;
-        UInt32 maxSampledTexturesPerShaderStage;
-        UInt32 maxSamplersPerShaderStage;
-        UInt32 maxStorageBuffersPerShaderStage;
-        UInt32 maxStorageTexturesPerShaderStage;
-        UInt32 maxUniformBuffersPerShaderStage;
-        UInt64 maxUniformBufferBindingSize;
-        UInt64 maxStorageBufferBindingSize;
-        UInt32 minUniformBufferOffsetAlignment;
-        UInt32 minStorageBufferOffsetAlignment;
-        UInt32 maxVertexBuffers;
-        UInt64 maxBufferSize;
-        UInt32 maxVertexAttributes;
-        UInt32 maxVertexBufferArrayStride;
-        UInt32 maxInterStageShaderVariables;
-        UInt32 maxColorAttachments;
-        UInt32 maxColorAttachmentBytesPerSample;
-        UInt32 maxComputeWorkgroupStorageSize;
-        UInt32 maxComputeInvocationsPerWorkgroup;
-        UInt32 maxComputeWorkgroupSizeX;
-        UInt32 maxComputeWorkgroupSizeY;
-        UInt32 maxComputeWorkgroupSizeZ;
-        UInt32 maxComputeWorkgroupsPerDimension;
-    };
-
-    enum GPUFeature {
-        Undefined,
-        DepthClipControl,
-        Depth32FloatStencil8,
-        TimestampQuery,
-        TextureCompressionBC,
-        TextureCompressionBCSliced3D,
-        TextureCompressionETC2,
-        TextureCompressionASTC,
-        TextureCompressionASTCSliced3D,
-        IndirectFirstInstance,
-        ShaderF16,
-        RG11B10UfloatRenderable,
-        BGRA8UnormStorage,
-        Float32Filterable,
-        Float32Blendable,
-        ClipDistances,
-        DualSourceBlending,
-        // Force32 = 0x7FFFFFFF
-    };
-
-    // Device Lost related types
-    enum GPUDeviceLostReason {
-        Unknown,
-        Destroyed
-    };
-
-    struct GPUDeviceLostInfo {
-        GPUDeviceLostReason Reason;
-        String Message;
-    };
-
-    // Error types
-    enum GPUErrorFilter {
-        Validation,
-        OutOfMemory,
-        Internal
-    };
-
-    interface IGPUError
-    {
-        String Message { get; };
-    };
-
-    interface IGPUValidationError : IGPUError
-    {
-    };
-
-    interface IGPUOutOfMemoryError : IGPUError
-    {
-    };
-
-    interface IGPUInternalError : IGPUError
-    {
-    };
-
-    // Buffer related types
-    enum GPUBufferUsage {
-        MapRead = 0x0001,
-        MapWrite = 0x0002,
-        CopySrc = 0x0004,
-        CopyDst = 0x0008,
-        Index = 0x0010,
-        Vertex = 0x0020,
-        Uniform = 0x0040,
-        Storage = 0x0080,
-        Indirect = 0x0100,
-        QueryResolve = 0x0200
-    };
-
-    enum GPUBufferMapState {
-        Unmapped,
-        Pending,
-        Mapped
-    };
-
-    enum GPUMapMode {
-        Read = 0x0001,
-        Write = 0x0002
-    };
-
-    struct GPUBufferDescriptor {
-        String Label;
-        UInt64 Size;
-        UInt32 Usage; // GPUBufferUsage flags
-        Boolean MappedAtCreation;
-    };
-
-    // Texture related types
-    enum GPUTextureUsage {
-        CopySrc = 0x01,
-        CopyDst = 0x02,
-        TextureBinding = 0x04,
-        StorageBinding = 0x08,
-        RenderAttachment = 0x10
-    };
-
-    enum GPUTextureDimension {
-        _1D,
-        _2D,
-        _3D
-    };
-
-    enum GPUTextureFormat {
-        // 8-bit formats
-        R8Unorm,
-        R8Snorm,
-        R8Uint,
-        R8Sint,
-        // 16-bit formats
-        R16Uint,
-        R16Sint,
-        R16Float,
-        RG8Unorm,
-        RG8Snorm,
-        RG8Uint,
-        RG8Sint,
-        // 32-bit formats
-        R32Uint,
-        R32Sint,
-        R32Float,
-        RG16Uint,
-        RG16Sint,
-        RG16Float,
-        RGBA8Unorm,
-        RGBA8UnormSrgb,
-        RGBA8Snorm,
-        RGBA8Uint,
-        RGBA8Sint,
-        BGRA8Unorm,
-        BGRA8UnormSrgb,
-        // Packed 32-bit formats
-        RGB9E5Ufloat,
-        RGB10A2Unorm,
-        RG11B10Ufloat,
-        // 64-bit formats
-        RG32Uint,
-        RG32Sint,
-        RG32Float,
-        RGBA16Uint,
-        RGBA16Sint,
-        RGBA16Float,
-        // 128-bit formats
-        RGBA32Uint,
-        RGBA32Sint,
-        RGBA32Float,
-        // Depth/stencil formats
-        Stencil8,
-        Depth16Unorm,
-        Depth24Plus,
-        Depth24PlusStencil8,
-        Depth32Float,
-        Depth32FloatStencil8
-    };
-
-    struct GPUExtent3D {
-        UInt32 Width;
-        UInt32 Height;
-        UInt32 DepthOrArrayLayers;
-    };
-
-    struct GPUTextureDescriptor {
-        String Label;
-        GPUExtent3D Size;
-        UInt32 MipLevelCount;
-        UInt32 SampleCount;
-        GPUTextureDimension Dimension;
-        GPUTextureFormat Format;
-        UInt32 Usage; // GPUTextureUsage flags
-        IVectorView<GPUTextureFormat> ViewFormats;
-    };
-
-    // Sampler related types
-    enum GPUAddressMode {
-        ClampToEdge,
-        Repeat,
-        MirrorRepeat
-    };
-
-    enum GPUFilterMode {
-        Nearest,
-        Linear
-    };
-
-    enum GPUMipmapFilterMode {
-        Nearest,
-        Linear
-    };
-
-    enum GPUCompareFunction {
-        Never,
-        Less,
-        Equal,
-        LessEqual,
-        Greater,
-        NotEqual,
-        GreaterEqual,
-        Always
-    };
-
-    struct GPUSamplerDescriptor {
-        String Label;
-        GPUAddressMode AddressModeU;
-        GPUAddressMode AddressModeV;
-        GPUAddressMode AddressModeW;
-        GPUFilterMode MagFilter;
-        GPUFilterMode MinFilter;
-        GPUMipmapFilterMode MipmapFilter;
-        Single LodMinClamp;
-        Single LodMaxClamp;
-        GPUCompareFunction Compare;
-        UInt16 MaxAnisotropy;
-    };
-
-    // Shader related types
-    struct GPUShaderModuleDescriptor {
-        String Label;
-        String Code;
-    };
-
-    // Pipeline related types
-    [default_interface]
-    runtimeclass GPUPipelineLayoutDescriptor
-    {
-        GPUPipelineLayoutDescriptor();
-        String Label;
-        IVectorView<IGPUBindGroupLayout> BindGroupLayouts;
-    };
-
-    [default_interface]
-    runtimeclass GPUComputePipelineDescriptor
-    {
-        GPUComputePipelineDescriptor();
-        String Label;
-        IGPUPipelineLayout Layout;
-        String EntryPoint;
-        IGPUShaderModule Module;
-        // Constants would be a map-like structure in WinRT
-    };
-
-    [default_interface]
-    runtimeclass GPURenderPipelineDescriptor
-    {
-        GPURenderPipelineDescriptor();
-        String Label;
-        IGPUPipelineLayout Layout;
-        // Additional fields from WebIDL spec will be added as needed
-        // vertex, primitive, depthStencil, multisample, fragment
-    };
-
-    // Command related types
-    struct GPUCommandEncoderDescriptor {
-        String Label;
-    };
-
-    struct GPUQuerySetDescriptor {
-        String Label;
-        GPUQueryType Type;
-        UInt32 Count;
-    };
-
-    enum GPUQueryType {
-        Occlusion,
-        Timestamp
-    };
-
-    // Bind group related types
-    [default_interface]
-    runtimeclass GPUBindGroupLayoutDescriptor
-    {
-        GPUBindGroupLayoutDescriptor();
-        String Label;
-        // Entries would be defined separately
-    };
-
-    [default_interface]
-    runtimeclass GPUBindGroupDescriptor
-    {
-        GPUBindGroupDescriptor();
-        String Label;
-        IGPUBindGroupLayout Layout;
-        // Entries would be defined separately
-    };
-
-    // Queue descriptor
-    struct GPUQueueDescriptor {
-        String Label;
-    };
-
-    // External texture descriptor
-    struct GPUExternalTextureDescriptor {
-        String Label;
-        // Additional properties would be defined here
-    };
-
-    // Render bundle encoder descriptor
-    struct GPURenderBundleEncoderDescriptor {
-        String Label;
-        IVectorView<GPUTextureFormat> ColorFormats;
-        GPUTextureFormat DepthStencilFormat;
-        UInt32 SampleCount;
-        Boolean DepthReadOnly;
-        Boolean StencilReadOnly;
-    };
-
-    // Interface declarations for GPU objects
-    interface IGPUBuffer : Windows.Foundation.IClosable
-    {
-        UInt64 Size { get; };
-        UInt32 Usage { get; };
-        GPUBufferMapState MapState { get; };
-        String Label;
-
-        Windows.Foundation.IAsyncAction MapAsync(UInt32 mode, UInt64 offset, UInt64 size);
-        Windows.Storage.Streams.IBuffer GetMappedRange(UInt64 offset, UInt64 size);
-        void Unmap();
-    };
-
-    interface IGPUTexture : Windows.Foundation.IClosable
-    {
-        UInt32 Width { get; };
-        UInt32 Height { get; };
-        UInt32 DepthOrArrayLayers { get; };
-        UInt32 MipLevelCount { get; };
-        UInt32 SampleCount { get; };
-        GPUTextureDimension Dimension { get; };
-        GPUTextureFormat Format { get; };
-        UInt32 Usage { get; };
-        String Label;
-
-        IGPUTextureView CreateView();
-        IGPUTextureView CreateViewWithDescriptor(GPUTextureViewDescriptor descriptor);
-    };
-
-    interface IGPUTextureView
-    {
-        String Label;
-    };
-
-    interface IGPUSampler
-    {
-        String Label;
-    };
-
-    interface IGPUExternalTexture
-    {
-        String Label;
-    };
-
-    interface IGPUShaderModule
-    {
-        String Label;
-        Windows.Foundation.IAsyncOperation<IGPUCompilationInfo> GetCompilationInfo();
-    };
-
-    interface IGPUCompilationInfo
-    {
-        IVectorView<IGPUCompilationMessage> Messages { get; };
-    };
-
-    interface IGPUCompilationMessage
-    {
-        String Message { get; };
-        // Additional properties would be defined here
-    };
-
-    interface IGPUBindGroupLayout
-    {
-        String Label;
-    };
-
-    interface IGPUPipelineLayout
-    {
-        String Label;
-    };
-
-    interface IGPUBindGroup
-    {
-        String Label;
-    };
-
-    interface IGPUComputePipeline
-    {
-        String Label;
-        IGPUBindGroupLayout GetBindGroupLayout(UInt32 index);
-    };
-
-    interface IGPURenderPipeline
-    {
-        String Label;
-        IGPUBindGroupLayout GetBindGroupLayout(UInt32 index);
-    };
-
-    interface IGPUCommandEncoder
-    {
-        String Label;
-
-        IGPUComputePassEncoder BeginComputePass();
-        IGPUComputePassEncoder BeginComputePassWithDescriptor(GPUComputePassDescriptor descriptor);
-        
-        IGPURenderPassEncoder BeginRenderPass(GPURenderPassDescriptor descriptor);
-        
-        void CopyBufferToBuffer(IGPUBuffer source, UInt64 sourceOffset, IGPUBuffer destination, UInt64 destinationOffset, UInt64 size);
-        void CopyBufferToTexture(IGPUBuffer source, IGPUTexture destination, GPUExtent3D copySize);
-        void CopyTextureToBuffer(IGPUTexture source, IGPUBuffer destination, GPUExtent3D copySize);
-        void CopyTextureToTexture(IGPUTexture source, IGPUTexture destination, GPUExtent3D copySize);
-        
-        void ResolveQuerySet(IGPUQuerySet querySet, UInt32 firstQuery, UInt32 queryCount, IGPUBuffer destination, UInt64 destinationOffset);
-        
-        IGPUCommandBuffer Finish();
-        IGPUCommandBuffer FinishWithDescriptor(GPUCommandBufferDescriptor descriptor);
-    };
-
-    interface IGPUCommandBuffer
-    {
-        String Label;
-    };
-
-    interface IGPUComputePassEncoder
-    {
-        String Label;
-        
-        void SetPipeline(IGPUComputePipeline pipeline);
-        void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
-        void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
-        
-        void DispatchWorkgroups(UInt32 workgroupCountX, UInt32 workgroupCountY, UInt32 workgroupCountZ);
-        void DispatchWorkgroupsIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
-        
-        void End();
-    };
-
-    interface IGPURenderPassEncoder
-    {
-        String Label;
-        
-        void SetPipeline(IGPURenderPipeline pipeline);
-        void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
-        void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
-        
-        void SetVertexBuffer(UInt32 slot, IGPUBuffer buffer, UInt64 offset, UInt64 size);
-        void SetIndexBuffer(IGPUBuffer buffer, GPUIndexFormat format, UInt64 offset, UInt64 size);
-        
-        void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance);
-        void DrawIndexed(UInt32 indexCount, UInt32 instanceCount, UInt32 firstIndex, Int32 baseVertex, UInt32 firstInstance);
-        void DrawIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
-        void DrawIndexedIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
-        
-        void End();
-    };
-
-    interface IGPURenderBundleEncoder
-    {
-        String Label;
-        
-        void SetPipeline(IGPURenderPipeline pipeline);
-        void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
-        void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
-        
-        void SetVertexBuffer(UInt32 slot, IGPUBuffer buffer, UInt64 offset, UInt64 size);
-        void SetIndexBuffer(IGPUBuffer buffer, GPUIndexFormat format, UInt64 offset, UInt64 size);
-        
-        void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance);
-        void DrawIndexed(UInt32 indexCount, UInt32 instanceCount, UInt32 firstIndex, Int32 baseVertex, UInt32 firstInstance);
-        void DrawIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
-        void DrawIndexedIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
-        
-        IGPURenderBundle Finish();
-        IGPURenderBundle FinishWithDescriptor(GPURenderBundleDescriptor descriptor);
-    };
-
-    interface IGPURenderBundle
-    {
-        String Label;
-    };
-
-    interface IGPUQuerySet : Windows.Foundation.IClosable
-    {
-        String Label;
-        GPUQueryType Type { get; };
-        UInt32 Count { get; };
-    };
-
-    interface IGPUQueue
-    {
-        String Label;
-
-        void Submit(IVectorView<IGPUCommandBuffer> commandBuffers);
-        Windows.Foundation.IAsyncAction OnSubmittedWorkDone();
-        
-        void WriteBuffer(IGPUBuffer buffer, UInt64 bufferOffset, Windows.Storage.Streams.IBuffer data, UInt64 dataOffset, UInt64 size);
-        void WriteTexture(IGPUTexture destination, Windows.Storage.Streams.IBuffer data, GPUExtent3D size);
-    };
-
-    // Additional types needed for render pass and compute pass
-    struct GPUComputePassDescriptor {
-        String Label;
-    };
-
-    [default_interface]
-    runtimeclass GPURenderPassDescriptor
-    {
-        GPURenderPassDescriptor();
-        String Label;
-        IVectorView<GPURenderPassColorAttachment> ColorAttachments;
-        GPURenderPassDepthStencilAttachment DepthStencilAttachment;
-        IGPUQuerySet OcclusionQuerySet;
-        UInt64 MaxDrawCount;
-    };
-
-    [default_interface]
-    runtimeclass GPURenderPassColorAttachment
-    {
-        GPURenderPassColorAttachment();
-        IGPUTextureView View;
-        UInt32 DepthSlice;
-        IGPUTextureView ResolveTarget;
-        GPULoadOp LoadOp;
-        GPUStoreOp StoreOp;
-        GPUColor ClearValue;
-    };
-
-    [default_interface]
-    runtimeclass GPURenderPassDepthStencilAttachment
-    {
-        GPURenderPassDepthStencilAttachment();
-        IGPUTextureView View;
-        GPULoadOp DepthLoadOp;
-        GPUStoreOp DepthStoreOp;
-        Single DepthClearValue;
-        GPULoadOp StencilLoadOp;
-        GPUStoreOp StencilStoreOp;
-        UInt32 StencilClearValue;
-        Boolean DepthReadOnly;
-        Boolean StencilReadOnly;
-    };
-
-    enum GPULoadOp {
-        Load,
-        Clear
-    };
-
-    enum GPUStoreOp {
-        Store,
-        Discard
-    };
-
-    struct GPUColor {
-        Double R;
-        Double G;
-        Double B;
-        Double A;
-    };
-
-    enum GPUIndexFormat {
-        Uint16,
-        Uint32
-    };
-
-    struct GPUCommandBufferDescriptor {
-        String Label;
-    };
-
-    struct GPURenderBundleDescriptor {
-        String Label;
-    };
-
-    struct GPUTextureViewDescriptor {
-        String Label;
-        GPUTextureFormat Format;
-        GPUTextureViewDimension Dimension;
-        GPUTextureAspect Aspect;
-        UInt32 BaseMipLevel;
-        UInt32 MipLevelCount;
-        UInt32 BaseArrayLayer;
-        UInt32 ArrayLayerCount;
-    };
-
-    enum GPUTextureViewDimension {
-        _1D,
-        _2D,
-        _2DArray,
-        Cube,
-        CubeArray,
-        _3D
-    };
-
-    enum GPUTextureAspect {
-        All,
-        StencilOnly,
-        DepthOnly
-    };
-
-    // Main interfaces
-    interface IGPUAdapter
-    {
-        GPUSupportedLimits Limits { get; };
-        IVectorView<GPUFeature> Features { get; };
-        IGPUAdapterInfo Info { get; };
-
-        Windows.Foundation.IAsyncOperation<IGPUDevice> RequestDevice();
-        Windows.Foundation.IAsyncOperation<IGPUDevice> RequestDeviceWithDescriptor(GPUDeviceDescriptor descriptor);
-    };
-
-    interface IGPUAdapterInfo
-    {
-        String Vendor { get; };
-        String Architecture { get; };
-        String Device { get; };
-        String Description { get; };
-        UInt32 SubgroupMinSize { get; };
-        UInt32 SubgroupMaxSize { get; };
-        Boolean IsFallbackAdapter { get; };
-    };
-
-    interface IGPUDevice : Windows.Foundation.IClosable
-    {
-        IVectorView<GPUFeature> Features { get; };
-        GPUSupportedLimits Limits { get; };
-        IGPUAdapterInfo AdapterInfo { get; };
-        IGPUQueue Queue { get; };
-        String Label;
-
-        // Device lost promise
-        Windows.Foundation.IAsyncOperation<GPUDeviceLostInfo> Lost { get; };
-
-        // Resource creation methods
-        IGPUBuffer CreateBuffer(GPUBufferDescriptor descriptor);
-        IGPUTexture CreateTexture(GPUTextureDescriptor descriptor);
-        IGPUSampler CreateSampler();
-        IGPUSampler CreateSamplerWithDescriptor(GPUSamplerDescriptor descriptor);
-        IGPUExternalTexture ImportExternalTexture(GPUExternalTextureDescriptor descriptor);
-
-        // Pipeline and binding creation
-        IGPUBindGroupLayout CreateBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
-        IGPUPipelineLayout CreatePipelineLayout(GPUPipelineLayoutDescriptor descriptor);
-        IGPUBindGroup CreateBindGroup(GPUBindGroupDescriptor descriptor);
-
-        // Shader and pipeline creation
-        IGPUShaderModule CreateShaderModule(GPUShaderModuleDescriptor descriptor);
-        IGPUComputePipeline CreateComputePipeline(GPUComputePipelineDescriptor descriptor);
-        IGPURenderPipeline CreateRenderPipeline(GPURenderPipelineDescriptor descriptor);
-        Windows.Foundation.IAsyncOperation<IGPUComputePipeline> CreateComputePipelineAsync(GPUComputePipelineDescriptor descriptor);
-        Windows.Foundation.IAsyncOperation<IGPURenderPipeline> CreateRenderPipelineAsync(GPURenderPipelineDescriptor descriptor);
-
-        // Command recording
-        IGPUCommandEncoder CreateCommandEncoder();
-        IGPUCommandEncoder CreateCommandEncoderWithDescriptor(GPUCommandEncoderDescriptor descriptor);
-        IGPURenderBundleEncoder CreateRenderBundleEncoder(GPURenderBundleEncoderDescriptor descriptor);
-
-        // Query sets
-        IGPUQuerySet CreateQuerySet(GPUQuerySetDescriptor descriptor);
-
-        // Error handling
-        void PushErrorScope(GPUErrorFilter filter);
-        Windows.Foundation.IAsyncOperation<IGPUError> PopErrorScope();
-
-        // Events
-        event Windows.Foundation.TypedEventHandler<IGPUDevice, IGPUError> UncapturedError;
-    };
-
-    struct GPUDeviceDescriptor {
-        String Label;
-        IVectorView<GPUFeature> RequiredFeatures;
-        // RequiredLimits would need a map-like structure
-        GPUQueueDescriptor DefaultQueue;
-    };
-
-    [default_interface]
-    runtimeclass GPU
-    {
-        GPU();
-        Windows.Foundation.IAsyncOperation<IGPUAdapter> RequestAdapter();
-        IGPUAdapter RequestAdapterSync(); // For synchronous version if needed
-    }
+	interface IGPUTextureView {
+		String Label { get; };
+	}
+	interface IGPUSampler {
+		String Label { get; };
+	}
+	interface IGPUExternalTexture {
+		String Label { get; };
+	}
+	interface IGPUBindGroupLayout {
+		String Label { get; };
+	}
+	interface IGPUPipelineLayout {
+		String Label { get; };
+	}
+	interface IGPUBindGroup {
+		String Label { get; };
+	}
+	interface IGPURenderBundle {
+		String Label { get; };
+	}
+	interface IGPUCommandBuffer {
+		String Label { get; };
+	}
+
+	struct GPUSupportedLimits {
+		UInt32 maxTextureDimension1D;
+		UInt32 maxTextureDimension2D;
+		UInt32 maxTextureDimension3D;
+		UInt32 maxTextureArrayLayers;
+		UInt32 maxBindGroups;
+		UInt32 maxBindGroupsPlusVertexBuffers;
+		UInt32 maxBindingsPerBindGroup;
+		UInt32 maxDynamicUniformBuffersPerPipelineLayout;
+		UInt32 maxDynamicStorageBuffersPerPipelineLayout;
+		UInt32 maxSampledTexturesPerShaderStage;
+		UInt32 maxSamplersPerShaderStage;
+		UInt32 maxStorageBuffersPerShaderStage;
+		UInt32 maxStorageTexturesPerShaderStage;
+		UInt32 maxUniformBuffersPerShaderStage;
+		UInt64 maxUniformBufferBindingSize;
+		UInt64 maxStorageBufferBindingSize;
+		UInt32 minUniformBufferOffsetAlignment;
+		UInt32 minStorageBufferOffsetAlignment;
+		UInt32 maxVertexBuffers;
+		UInt64 maxBufferSize;
+		UInt32 maxVertexAttributes;
+		UInt32 maxVertexBufferArrayStride;
+		UInt32 maxInterStageShaderVariables;
+		UInt32 maxColorAttachments;
+		UInt32 maxColorAttachmentBytesPerSample;
+		UInt32 maxComputeWorkgroupStorageSize;
+		UInt32 maxComputeInvocationsPerWorkgroup;
+		UInt32 maxComputeWorkgroupSizeX;
+		UInt32 maxComputeWorkgroupSizeY;
+		UInt32 maxComputeWorkgroupSizeZ;
+		UInt32 maxComputeWorkgroupsPerDimension;
+	};
+
+	enum GPUAddressMode {
+		ClampToEdge,
+		Repeat,
+		MirrorRepeat
+	};
+
+	enum GPUAutoLayoutMode {
+		Auto
+	};
+
+	enum GPUBlendFactor {
+		Zero,
+		One,
+		Src,
+		OneMinusSrc,
+		SrcAlpha,
+		OneMinusSrcAlpha,
+		Dst,
+		OneMinusDst,
+		DstAlpha,
+		OneMinusDstAlpha,
+		SrcAlphaSaturated,
+		Constant,
+		OneMinusConstant
+	};
+
+	enum GPUBlendOperation {
+		Add,
+		Subtract,
+		ReverseSubtract,
+		Min,
+		Max
+	};
+
+	enum GPUBufferBindingType {
+		Uniform,
+		Storage,
+		ReadOnlyStorage
+	};
+
+	enum GPUBufferMapState {
+		Unmapped,
+		Pending,
+		Mapped
+	};
+
+	enum GPUBufferUsage {
+		MapRead = 0x0001,
+		MapWrite = 0x0002,
+		CopySrc = 0x0004,
+		CopyDst = 0x0008,
+		Index = 0x0010,
+		Vertex = 0x0020,
+		Uniform = 0x0040,
+		Storage = 0x0080,
+		Indirect = 0x0100,
+		QueryResolve = 0x0200
+	};
+
+	enum GPUCompareFunction {
+		Never,
+		Less,
+		Equal,
+		LessEqual,
+		Greater,
+		NotEqual,
+		GreaterEqual,
+		Always
+	};
+
+	enum GPUCompilationMessageType {
+		Error,
+		Warning,
+		Info
+	};
+
+	enum GPUCullMode {
+		None,
+		Front,
+		Back
+	};
+
+	enum GPUDeviceLostReason {
+		Unknown,
+		Destroyed
+	};
+
+	enum GPUErrorFilter {
+		Validation,
+		OutOfMemory,
+		Internal
+	};
+
+	enum GPUFeature {
+		Undefined,
+		CoreFeaturesAndLimits,
+		DepthClipControl,
+		Depth32FloatStencil8,
+		TextureCompressionBC,
+		TextureCompressionBCSliced3D,
+		TextureCompressionETC2,
+		TextureCompressionASTC,
+		TextureCompressionASTCSliced3D,
+		TimestampQuery,
+		IndirectFirstInstance,
+		ShaderF16,
+		RG11B10UfloatRenderable,
+		BGRA8UnormStorage,
+		Float32Filterable,
+		Float32Blendable,
+		ClipDistances,
+		DualSourceBlending,
+		Subgroups,
+		TextureFormatsTier1,
+		TextureFormatsTier2
+	};
+
+	enum GPUFilterMode {
+		Nearest,
+		Linear
+	};
+
+	enum GPUFrontFace {
+		CCW,
+		CW
+	};
+
+	enum GPUIndexFormat {
+		Uint16,
+		Uint32
+	};
+
+	enum GPULoadOp {
+		Load,
+		Clear
+	};
+
+	enum GPUMapMode {
+		Read = 0x0001,
+		Write = 0x0002
+	};
+
+	enum GPUMipmapFilterMode {
+		Nearest,
+		Linear
+	};
+
+	enum GPUPipelineErrorReason {
+		Validation,
+		Internal
+	};
+
+	enum GPUPowerPreference {
+		LowPower,
+		HighPerformance
+	};
+
+	enum GPUPrimitiveTopology {
+		PointList,
+		LineList,
+		LineStrip,
+		TriangleList,
+		TriangleStrip
+	};
+
+	enum GPUQueryType {
+		Occlusion,
+		Timestamp
+	};
+
+	enum GPUSamplerBindingType {
+		Filtering,
+		NonFiltering,
+		Comparison
+	};
+
+	enum GPUShaderStage {
+		Vertex = 0x1,
+		Fragment = 0x2,
+		Compute = 0x4
+	};
+
+	enum GPUStencilOperation {
+		Keep,
+		Zero,
+		Replace,
+		Invert,
+		IncrementClamp,
+		DecrementClamp,
+		IncrementWrap,
+		DecrementWrap
+	};
+
+	enum GPUStoreOp {
+		Store,
+		Discard
+	};
+
+	enum GPUStorageTextureAccess {
+		WriteOnly,
+		ReadOnly,
+		ReadWrite
+	};
+
+	enum GPUTextureAspect {
+		All,
+		StencilOnly,
+		DepthOnly
+	};
+
+	enum GPUTextureDimension {
+		_1D,
+		_2D,
+		_3D
+	};
+
+	enum GPUTextureFormat {
+		// 8-bit formats
+		R8Unorm,
+		R8Snorm,
+		R8Uint,
+		R8Sint,
+		// 16-bit formats
+		R16Unorm,
+		R16Snorm,
+		R16Uint,
+		R16Sint,
+		R16Float,
+		RG8Unorm,
+		RG8Snorm,
+		RG8Uint,
+		RG8Sint,
+		// 32-bit formats
+		R32Uint,
+		R32Sint,
+		R32Float,
+		RG16Unorm,
+		RG16Snorm,
+		RG16Uint,
+		RG16Sint,
+		RG16Float,
+		RGBA8Unorm,
+		RGBA8UnormSrgb,
+		RGBA8Snorm,
+		RGBA8Uint,
+		RGBA8Sint,
+		BGRA8Unorm,
+		BGRA8UnormSrgb,
+		// Packed 32-bit formats
+		RGB9E5Ufloat,
+		RGB10A2Uint,
+		RGB10A2Unorm,
+		RG11B10Ufloat,
+		// 64-bit formats
+		RG32Uint,
+		RG32Sint,
+		RG32Float,
+		RGBA16Unorm,
+		RGBA16Snorm,
+		RGBA16Uint,
+		RGBA16Sint,
+		RGBA16Float,
+		// 128-bit formats
+		RGBA32Uint,
+		RGBA32Sint,
+		RGBA32Float,
+		// Depth/stencil formats
+		Stencil8,
+		Depth16Unorm,
+		Depth24Plus,
+		Depth24PlusStencil8,
+		Depth32Float,
+		Depth32FloatStencil8,
+		// BC compressed formats
+		BC1RGBAUnorm,
+		BC1RGBAUnormSrgb,
+		BC2RGBAUnorm,
+		BC2RGBAUnormSrgb,
+		BC3RGBAUnorm,
+		BC3RGBAUnormSrgb,
+		BC4RUnorm,
+		BC4RSnorm,
+		BC5RGUnorm,
+		BC5RGSnorm,
+		BC6HRGBUfloat,
+		BC6HRGBFloat,
+		BC7RGBAUnorm,
+		BC7RGBAUnormSrgb,
+		// ETC2 compressed formats
+		ETC2RGB8Unorm,
+		ETC2RGB8UnormSrgb,
+		ETC2RGB8A1Unorm,
+		ETC2RGB8A1UnormSrgb,
+		ETC2RGBA8Unorm,
+		ETC2RGBA8UnormSrgb,
+		EACR11Unorm,
+		EACR11Snorm,
+		EACRG11Unorm,
+		EACRG11Snorm,
+		// ASTC compressed formats
+		ASTC4x4Unorm,
+		ASTC4x4UnormSrgb,
+		ASTC5x4Unorm,
+		ASTC5x4UnormSrgb,
+		ASTC5x5Unorm,
+		ASTC5x5UnormSrgb,
+		ASTC6x5Unorm,
+		ASTC6x5UnormSrgb,
+		ASTC6x6Unorm,
+		ASTC6x6UnormSrgb,
+		ASTC8x5Unorm,
+		ASTC8x5UnormSrgb,
+		ASTC8x6Unorm,
+		ASTC8x6UnormSrgb,
+		ASTC8x8Unorm,
+		ASTC8x8UnormSrgb,
+		ASTC10x5Unorm,
+		ASTC10x5UnormSrgb,
+		ASTC10x6Unorm,
+		ASTC10x6UnormSrgb,
+		ASTC10x8Unorm,
+		ASTC10x8UnormSrgb,
+		ASTC10x10Unorm,
+		ASTC10x10UnormSrgb,
+		ASTC12x10Unorm,
+		ASTC12x10UnormSrgb,
+		ASTC12x12Unorm,
+		ASTC12x12UnormSrgb
+	};
+
+	enum GPUTextureSampleType {
+		Float,
+		UnfilterableFloat,
+		Depth,
+		Sint,
+		Uint
+	};
+
+	enum GPUTextureUsage {
+		CopySrc = 0x01,
+		CopyDst = 0x02,
+		TextureBinding = 0x04,
+		StorageBinding = 0x08,
+		RenderAttachment = 0x10
+	};
+
+	enum GPUTextureViewDimension {
+		_1D,
+		_2D,
+		_2DArray,
+		Cube,
+		CubeArray,
+		_3D
+	};
+
+	enum GPUVertexFormat {
+		Uint8x2,
+		Uint8x4,
+		Sint8x2,
+		Sint8x4,
+		Unorm8x2,
+		Unorm8x4,
+		Snorm8x2,
+		Snorm8x4,
+		Uint16x2,
+		Uint16x4,
+		Sint16x2,
+		Sint16x4,
+		Unorm16x2,
+		Unorm16x4,
+		Snorm16x2,
+		Snorm16x4,
+		Float16x2,
+		Float16x4,
+		Float32,
+		Float32x2,
+		Float32x3,
+		Float32x4,
+		Uint32,
+		Uint32x2,
+		Uint32x3,
+		Uint32x4,
+		Sint32,
+		Sint32x2,
+		Sint32x3,
+		Sint32x4
+	};
+
+	enum GPUVertexStepMode {
+		Vertex,
+		Instance
+	};
+
+	// Structs and other types
+	struct GPURequestAdapterOptions {
+		String FeatureLevel;
+		GPUPowerPreference PowerPreference;
+		Boolean ForceFallbackAdapter;
+		Boolean XrCompatible;
+	};
+
+	struct GPUDeviceLostInfo {
+		GPUDeviceLostReason Reason;
+		String Message;
+	};
+
+	interface IGPUError
+	{
+		String Message { get; };
+	}
+
+	[uuid(5d0a6da6-cf8f-4f94-b15d-7bdd6af7093c), version(1.0)]
+	interface IGPUValidationError requires IGPUError
+	{
+	}
+
+	[uuid(e6e23dde-0b90-45e2-a67e-5e049f9550bc), version(1.0)]
+	interface IGPUOutOfMemoryError requires IGPUError
+	{
+	}
+
+	[uuid(6ba34c74-10e0-49dd-b5d5-8b875a758f4e), version(1.0)]
+	interface IGPUInternalError requires IGPUError
+	{
+	}
+
+	// Buffer related types
+	struct GPUBufferDescriptor {
+		String Label;
+		UInt64 Size;
+		UInt32 Usage; // GPUBufferUsage flags
+		Boolean MappedAtCreation;
+	};
+
+	// Texture related types
+	struct GPUExtent3D {
+		UInt32 Width;
+		UInt32 Height;
+		UInt32 DepthOrArrayLayers;
+	};
+
+	runtimeclass GPUTextureDescriptor {
+		String Label;
+		GPUExtent3D Size;
+		UInt32 MipLevelCount;
+		UInt32 SampleCount;
+		GPUTextureDimension Dimension;
+		GPUTextureFormat Format;
+		UInt32 Usage; // GPUTextureUsage flags
+		IVectorView<GPUTextureFormat> ViewFormats;
+	};
+
+	// Sampler related types
+	struct GPUSamplerDescriptor {
+		String Label;
+		GPUAddressMode AddressModeU;
+		GPUAddressMode AddressModeV;
+		GPUAddressMode AddressModeW;
+		GPUFilterMode MagFilter;
+		GPUFilterMode MinFilter;
+		GPUMipmapFilterMode MipmapFilter;
+		Single LodMinClamp;
+		Single LodMaxClamp;
+		GPUCompareFunction Compare;
+		UInt16 MaxAnisotropy;
+	};
+
+	// Shader related types
+	struct GPUShaderModuleDescriptor {
+		String Label;
+		String Code;
+	};
+
+	[default_interface]
+	runtimeclass GPUPipelineLayoutDescriptor
+	{
+		GPUPipelineLayoutDescriptor();
+		String Label;
+		IVectorView<IGPUBindGroupLayout> BindGroupLayouts;
+	};
+
+	[default_interface]
+	runtimeclass GPUComputePipelineDescriptor
+	{
+		GPUComputePipelineDescriptor();
+		String Label;
+		IGPUPipelineLayout Layout;
+		String EntryPoint;
+		IGPUShaderModule Module;
+		// Constants would be a map-like structure in WinRT
+	};
+
+	[default_interface]
+	runtimeclass GPURenderPipelineDescriptor
+	{
+		GPURenderPipelineDescriptor();
+		String Label;
+		IGPUPipelineLayout Layout;
+	};
+
+	// Command related types
+	struct GPUCommandEncoderDescriptor {
+		String Label;
+	};
+
+	struct GPUQuerySetDescriptor {
+		String Label;
+		GPUQueryType Type;
+		UInt32 Count;
+	};
+
+
+	// Bind group related types
+	struct GPUBindGroupLayoutEntry {
+		UInt32 Binding;
+		UInt32 Visibility; // GPUShaderStageFlags
+		// For simplicity, we'll need separate methods for different binding types
+		// rather than unions which aren't well supported in WinRT IDL
+	};
+
+	// Interface declarations for GPU objects
+	interface IGPUBuffer requires Windows.Foundation.IClosable
+	{
+		String Label { get; };
+		UInt64 Size { get; };
+		UInt32 Usage { get; };
+		GPUBufferMapState MapState { get; };
+
+		Windows.Foundation.IAsyncAction MapAsync(UInt32 mode, UInt64 offset, UInt64 size);
+		Windows.Storage.Streams.IBuffer GetMappedRange(UInt64 offset, UInt64 size);
+		void Unmap();
+	};
+
+
+	[default_interface]
+	runtimeclass GPUBindGroupLayoutDescriptor
+	{
+		GPUBindGroupLayoutDescriptor();
+		String Label;
+		IVectorView<GPUBindGroupLayoutEntry> Entries;
+	};
+
+
+	runtimeclass GPUBindGroupEntry {
+		UInt32 Binding;
+	// Resource would be a variant - simplified for WinRT
+	IGPUBuffer Buffer;
+	IGPUSampler Sampler;
+	IGPUTextureView TextureView;
+};
+
+[default_interface]
+runtimeclass GPUBindGroupDescriptor
+{
+	GPUBindGroupDescriptor();
+	String Label;
+	IGPUBindGroupLayout Layout;
+	IVectorView<GPUBindGroupEntry> Entries;
+};
+
+[default_interface]
+runtimeclass GPUQueueDescriptor {
+	String Label;
+};
+
+[default_interface]
+runtimeclass GPUExternalTextureDescriptor {
+	String Label;
+};
+
+[default_interface]
+runtimeclass GPURenderBundleEncoderDescriptor {
+	String Label;
+	IVectorView<GPUTextureFormat> ColorFormats;
+	GPUTextureFormat DepthStencilFormat;
+	UInt32 SampleCount;
+	Boolean DepthReadOnly;
+	Boolean StencilReadOnly;
+};
+
+interface IGPUTexture requires Windows.Foundation.IClosable
+{
+	String Label { get; };
+	UInt32 Width { get; };
+	UInt32 Height { get; };
+	UInt32 DepthOrArrayLayers { get; };
+	UInt32 MipLevelCount { get; };
+	UInt32 SampleCount { get; };
+	GPUTextureDimension Dimension { get; };
+	GPUTextureFormat Format { get; };
+	UInt32 Usage { get; };
+
+	IGPUTextureView CreateView();
+	IGPUTextureView CreateViewWithDescriptor(GPUTextureViewDescriptor descriptor);
+};
+
+
+interface IGPUShaderModule
+{
+	String Label { get; };
+	Windows.Foundation.IAsyncOperation<IGPUCompilationInfo> GetCompilationInfo();
+};
+
+interface IGPUCompilationInfo
+{
+	IVectorView<IGPUCompilationMessage> Messages { get; };
+};
+
+interface IGPUCompilationMessage
+{
+	String Message { get; };
+	// Additional properties would be defined here
+};
+
+interface IGPUComputePipeline
+{
+	String Label { get; };
+	IGPUBindGroupLayout GetBindGroupLayout(UInt32 index);
+};
+
+interface IGPURenderPipeline
+{
+	String Label { get; };
+	IGPUBindGroupLayout GetBindGroupLayout(UInt32 index);
+};
+
+interface IGPUComputePassEncoder
+{
+	String Label { get; };
+	void SetPipeline(IGPUComputePipeline pipeline);
+	void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
+	void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
+
+	void DispatchWorkgroups(UInt32 workgroupCountX, UInt32 workgroupCountY, UInt32 workgroupCountZ);
+	void DispatchWorkgroupsIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
+
+	void End();
+};
+
+[default_interface]
+runtimeclass GPURenderPassDescriptor
+{
+	GPURenderPassDescriptor();
+	String Label;
+	IVectorView<GPURenderPassColorAttachment> ColorAttachments;
+	GPURenderPassDepthStencilAttachment DepthStencilAttachment;
+	IGPUQuerySet OcclusionQuerySet;
+	UInt64 MaxDrawCount;
+};
+
+// Additional types needed for render pass and compute pass
+runtimeclass GPUComputePassDescriptor {
+	String Label;
+};
+
+interface IGPURenderPassEncoder
+{
+	String Label { get; };
+	void SetPipeline(IGPURenderPipeline pipeline);
+	void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
+	void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
+
+	void SetVertexBuffer(UInt32 slot, IGPUBuffer buffer, UInt64 offset, UInt64 size);
+	void SetIndexBuffer(IGPUBuffer buffer, GPUIndexFormat format, UInt64 offset, UInt64 size);
+
+	void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance);
+	void DrawIndexed(UInt32 indexCount, UInt32 instanceCount, UInt32 firstIndex, Int32 baseVertex, UInt32 firstInstance);
+	void DrawIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
+	void DrawIndexedIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
+
+	void End();
+};
+
+
+interface IGPUCommandEncoder
+{
+	String Label { get; };
+	IGPUComputePassEncoder BeginComputePass();
+	IGPUComputePassEncoder BeginComputePassWithDescriptor(GPUComputePassDescriptor descriptor);
+
+	IGPURenderPassEncoder BeginRenderPass(GPURenderPassDescriptor descriptor);
+
+	void CopyBufferToBuffer(IGPUBuffer source, UInt64 sourceOffset, IGPUBuffer destination, UInt64 destinationOffset, UInt64 size);
+	void CopyBufferToTexture(IGPUBuffer source, IGPUTexture destination, GPUExtent3D copySize);
+	void CopyTextureToBuffer(IGPUTexture source, IGPUBuffer destination, GPUExtent3D copySize);
+	void CopyTextureToTexture(IGPUTexture source, IGPUTexture destination, GPUExtent3D copySize);
+
+	void ResolveQuerySet(IGPUQuerySet querySet, UInt32 firstQuery, UInt32 queryCount, IGPUBuffer destination, UInt64 destinationOffset);
+
+	IGPUCommandBuffer Finish();
+	IGPUCommandBuffer FinishWithDescriptor(GPUCommandBufferDescriptor descriptor);
+};
+
+
+interface IGPURenderBundleEncoder
+{
+	String Label { get; };
+	void SetPipeline(IGPURenderPipeline pipeline);
+	void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
+	void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
+
+	void SetVertexBuffer(UInt32 slot, IGPUBuffer buffer, UInt64 offset, UInt64 size);
+	void SetIndexBuffer(IGPUBuffer buffer, GPUIndexFormat format, UInt64 offset, UInt64 size);
+
+	void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance);
+	void DrawIndexed(UInt32 indexCount, UInt32 instanceCount, UInt32 firstIndex, Int32 baseVertex, UInt32 firstInstance);
+	void DrawIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
+	void DrawIndexedIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
+
+	IGPURenderBundle Finish();
+	IGPURenderBundle FinishWithDescriptor(GPURenderBundleDescriptor descriptor);
+};
+
+interface IGPUQuerySet requires Windows.Foundation.IClosable
+{
+	String Label { get; };
+	GPUQueryType Type { get; };
+	UInt32 Count { get; };
+};
+
+interface IGPUQueue
+{
+	String Label { get; };
+	void Submit(IVectorView<IGPUCommandBuffer> commandBuffers);
+	Windows.Foundation.IAsyncAction OnSubmittedWorkDone();
+
+	void WriteBuffer(IGPUBuffer buffer, UInt64 bufferOffset, Windows.Storage.Streams.IBuffer data, UInt64 dataOffset, UInt64 size);
+	void WriteTexture(IGPUTexture destination, Windows.Storage.Streams.IBuffer data, GPUExtent3D size);
+};
+
+
+struct GPUColor {
+	Double R;
+	Double G;
+	Double B;
+	Double A;
+};
+
+[default_interface]
+runtimeclass GPURenderPassColorAttachment
+{
+	GPURenderPassColorAttachment();
+	IGPUTextureView View;
+	UInt32 DepthSlice;
+	IGPUTextureView ResolveTarget;
+	GPULoadOp LoadOp;
+	GPUStoreOp StoreOp;
+	GPUColor ClearValue;
+};
+
+[default_interface]
+runtimeclass GPURenderPassDepthStencilAttachment
+{
+	GPURenderPassDepthStencilAttachment();
+	IGPUTextureView View;
+	GPULoadOp DepthLoadOp;
+	GPUStoreOp DepthStoreOp;
+	Single DepthClearValue;
+	GPULoadOp StencilLoadOp;
+	GPUStoreOp StencilStoreOp;
+	UInt32 StencilClearValue;
+	Boolean DepthReadOnly;
+	Boolean StencilReadOnly;
+};
+
+runtimeclass GPUCommandBufferDescriptor {
+	String Label;
+};
+
+runtimeclass GPURenderBundleDescriptor {
+	String Label;
+};
+
+runtimeclass GPUTextureViewDescriptor {
+	String Label;
+	GPUTextureFormat Format;
+	GPUTextureViewDimension Dimension;
+	GPUTextureAspect Aspect;
+	UInt32 BaseMipLevel;
+	UInt32 MipLevelCount;
+	UInt32 BaseArrayLayer;
+	UInt32 ArrayLayerCount;
+};
+
+struct GPUAdapterInfo
+{
+	String Vendor;
+	String Architecture;
+	String Device;
+	String Description;
+	UInt32 SubgroupMinSize;
+	UInt32 SubgroupMaxSize;
+	Boolean IsFallbackAdapter;
+};
+
+runtimeclass GPUDeviceDescriptor {
+	String Label;
+	IVectorView<GPUFeature> RequiredFeatures;
+	// RequiredLimits would need a map-like structure
+	GPUQueueDescriptor DefaultQueue;
+};
+
+interface IGPUAdapter
+{
+	IVectorView<GPUFeature> Features { get; };
+	GPUSupportedLimits Limits { get; };
+	GPUAdapterInfo Info { get; };
+
+	Windows.Foundation.IAsyncOperation<IGPUDevice> RequestDevice();
+	Windows.Foundation.IAsyncOperation<IGPUDevice> RequestDeviceWithDescriptor(GPUDeviceDescriptor descriptor);
+};
+
+
+interface IGPUDevice requires Windows.Foundation.IClosable
+{
+	String Label { get; };
+	IVectorView<GPUFeature> Features { get; };
+	GPUSupportedLimits Limits { get; };
+	GPUAdapterInfo AdapterInfo { get; };
+	IGPUQueue Queue { get; };
+
+	// Device lost promise
+	Windows.Foundation.IAsyncOperation<GPUDeviceLostInfo> Lost { get; };
+
+	// Resource creation methods
+	IGPUBuffer CreateBuffer(GPUBufferDescriptor descriptor);
+	IGPUTexture CreateTexture(GPUTextureDescriptor descriptor);
+	IGPUSampler CreateSampler();
+	IGPUSampler CreateSamplerWithDescriptor(GPUSamplerDescriptor descriptor);
+	IGPUExternalTexture ImportExternalTexture(GPUExternalTextureDescriptor descriptor);
+
+	// Pipeline and binding creation
+	IGPUBindGroupLayout CreateBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
+	IGPUPipelineLayout CreatePipelineLayout(GPUPipelineLayoutDescriptor descriptor);
+	IGPUBindGroup CreateBindGroup(GPUBindGroupDescriptor descriptor);
+
+	// Shader and pipeline creation
+	IGPUShaderModule CreateShaderModule(GPUShaderModuleDescriptor descriptor);
+	IGPUComputePipeline CreateComputePipeline(GPUComputePipelineDescriptor descriptor);
+	IGPURenderPipeline CreateRenderPipeline(GPURenderPipelineDescriptor descriptor);
+	Windows.Foundation.IAsyncOperation<IGPUComputePipeline> CreateComputePipelineAsync(GPUComputePipelineDescriptor descriptor);
+	Windows.Foundation.IAsyncOperation<IGPURenderPipeline> CreateRenderPipelineAsync(GPURenderPipelineDescriptor descriptor);
+
+	// Command recording
+	IGPUCommandEncoder CreateCommandEncoder();
+	IGPUCommandEncoder CreateCommandEncoderWithDescriptor(GPUCommandEncoderDescriptor descriptor);
+	IGPURenderBundleEncoder CreateRenderBundleEncoder(GPURenderBundleEncoderDescriptor descriptor);
+
+	// Query sets
+	IGPUQuerySet CreateQuerySet(GPUQuerySetDescriptor descriptor);
+
+	// Error handling
+	void PushErrorScope(GPUErrorFilter filter);
+	Windows.Foundation.IAsyncOperation<IGPUError> PopErrorScope();
+
+	// Events
+	event Windows.Foundation.TypedEventHandler<IGPUDevice, IGPUError> UncapturedError;
+};
+
+
+[default_interface]
+runtimeclass GPU
+{
+	GPU();
+	Windows.Foundation.IAsyncOperation<IGPUAdapter> RequestAdapter();
+	Windows.Foundation.IAsyncOperation<IGPUAdapter> RequestAdapterWithOptions(GPURequestAdapterOptions options);
+	GPUTextureFormat GetPreferredCanvasFormat();
+	//IWGSLLanguageFeatures WgslLanguageFeatures;
+}
 }
