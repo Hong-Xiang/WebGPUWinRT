@@ -8,7 +8,8 @@ namespace winrt::WebGPUWinRT::implementation
 	struct GPU : GPUT<GPU>
 	{
 		GPU();
-        winrt::WebGPUWinRT::IGPUAdapter RequestAdapter();
+		winrt::Windows::Foundation::IAsyncOperation<winrt::WebGPUWinRT::IGPUAdapter> RequestAdapter();
+		winrt::Windows::Foundation::IAsyncOperation<winrt::WebGPUWinRT::IGPUAdapter> RequestAdapter(winrt::WebGPUWinRT::GPURequestAdapterOptions options);
 
 		WGPUInstance handle{};
 		~GPU();

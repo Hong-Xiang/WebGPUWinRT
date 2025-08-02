@@ -2,7 +2,11 @@
 #include "GPU.h"
 #include "GPU.g.cpp"
 #include <iostream>
+#include "Interop.h"
 #include "GPUAdapter.h"
+#include <winrt/Windows.Foundation.h>
+#include <future>
+
 
 namespace winrt::WebGPUWinRT::implementation
 {
@@ -12,10 +16,47 @@ namespace winrt::WebGPUWinRT::implementation
 		handle = wgpuCreateInstance(&desc);
 	}
 
-	winrt::WebGPUWinRT::IGPUAdapter GPU::RequestAdapter()
+	winrt::Windows::Foundation::IAsyncOperation<winrt::WebGPUWinRT::IGPUAdapter> GPU::RequestAdapter()
 	{
-		return make<implementation::GPUAdapter>(*this);
+		WGPURequestAdapterOptions adapterOpts = {};
+		adapterOpts.nextInChain = nullptr;
+
+		struct UserData {
+			WGPUAdapter adapter = nullptr;
+			bool requestEnded = false;
+		};
+		auto userData{ std::make_shared<UserData>() };
+
+		auto promise = std::make_shared<std::promise<WGPUAdapter>>();
+
+		auto callback = [](WGPURequestAdapterStatus status, WGPUAdapter adapter, WGPUStringView message, void* userdata, void* _) {
+			auto p = static_cast<std::promise<WGPUAdapter>*>(userdata);
+			if (status == WGPURequestAdapterStatus_Success)
+			{
+				std::cout << "Got adapter in async" << std::endl;
+				p->set_value(adapter);
+			}
+			else
+			{
+				p->set_exception(std::make_exception_ptr(std::runtime_error(interop::to(message))));
+			}
+			};
+
+		wgpuInstanceRequestAdapter(handle, &adapterOpts, {
+			.callback = callback,
+			.userdata1 = promise.get(),
+			});
+
+		// TODO: use correct async implementation
+		auto result = promise->get_future().get();
+		co_return make<implementation::GPUAdapter>(result);
 	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::WebGPUWinRT::IGPUAdapter> GPU::RequestAdapter(winrt::WebGPUWinRT::GPURequestAdapterOptions options)
+	{
+		throw hresult_not_implemented();
+	}
+
 
 	GPU::~GPU()
 	{

@@ -158,6 +158,23 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GPUBindGroupDescriptor.h" />
+    <ClInclude Include="GPUBindGroupEntry.h" />
+    <ClInclude Include="GPUBindGroupLayoutDescriptor.h" />
+    <ClInclude Include="GPUCommandBufferDescriptor.h" />
+    <ClInclude Include="GPUComputePassDescriptor.h" />
+    <ClInclude Include="GPUComputePipelineDescriptor.h" />
+    <ClInclude Include="GPUDeviceDescriptor.h" />
+    <ClInclude Include="GPUExternalTextureDescriptor.h" />
+    <ClInclude Include="GPUPipelineLayoutDescriptor.h" />
+    <ClInclude Include="GPUQueueDescriptor.h" />
+    <ClInclude Include="GPURenderBundleDescriptor.h" />
+    <ClInclude Include="GPURenderBundleEncoderDescriptor.h" />
+    <ClInclude Include="GPURenderPassColorAttachment.h" />
+    <ClInclude Include="GPURenderPassDepthStencilAttachment.h" />
+    <ClInclude Include="GPURenderPassDescriptor.h" />
+    <ClInclude Include="GPURenderPipelineDescriptor.h" />
+    <ClInclude Include="GPUTextureDescriptor.h" />
     <ClInclude Include="Interop.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="GPU.h">
@@ -168,6 +185,23 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GPUBindGroupDescriptor.cpp" />
+    <ClCompile Include="GPUBindGroupEntry.cpp" />
+    <ClCompile Include="GPUBindGroupLayoutDescriptor.cpp" />
+    <ClCompile Include="GPUCommandBufferDescriptor.cpp" />
+    <ClCompile Include="GPUComputePassDescriptor.cpp" />
+    <ClCompile Include="GPUComputePipelineDescriptor.cpp" />
+    <ClCompile Include="GPUDeviceDescriptor.cpp" />
+    <ClCompile Include="GPUExternalTextureDescriptor.cpp" />
+    <ClCompile Include="GPUPipelineLayoutDescriptor.cpp" />
+    <ClCompile Include="GPUQueueDescriptor.cpp" />
+    <ClCompile Include="GPURenderBundleDescriptor.cpp" />
+    <ClCompile Include="GPURenderBundleEncoderDescriptor.cpp" />
+    <ClCompile Include="GPURenderPassColorAttachment.cpp" />
+    <ClCompile Include="GPURenderPassDepthStencilAttachment.cpp" />
+    <ClCompile Include="GPURenderPassDescriptor.cpp" />
+    <ClCompile Include="GPURenderPipelineDescriptor.cpp" />
+    <ClCompile Include="GPUTextureDescriptor.cpp" />
     <ClCompile Include="Interop.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

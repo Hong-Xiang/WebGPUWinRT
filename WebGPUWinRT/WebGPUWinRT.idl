@@ -1,64 +1,6 @@
 namespace WebGPUWinRT
 {
-	interface IGPUTextureView {
-		String Label { get; };
-	}
-	interface IGPUSampler {
-		String Label { get; };
-	}
-	interface IGPUExternalTexture {
-		String Label { get; };
-	}
-	interface IGPUBindGroupLayout {
-		String Label { get; };
-	}
-	interface IGPUPipelineLayout {
-		String Label { get; };
-	}
-	interface IGPUBindGroup {
-		String Label { get; };
-	}
-	interface IGPURenderBundle {
-		String Label { get; };
-	}
-	interface IGPUCommandBuffer {
-		String Label { get; };
-	}
-
-	struct GPUSupportedLimits {
-		UInt32 maxTextureDimension1D;
-		UInt32 maxTextureDimension2D;
-		UInt32 maxTextureDimension3D;
-		UInt32 maxTextureArrayLayers;
-		UInt32 maxBindGroups;
-		UInt32 maxBindGroupsPlusVertexBuffers;
-		UInt32 maxBindingsPerBindGroup;
-		UInt32 maxDynamicUniformBuffersPerPipelineLayout;
-		UInt32 maxDynamicStorageBuffersPerPipelineLayout;
-		UInt32 maxSampledTexturesPerShaderStage;
-		UInt32 maxSamplersPerShaderStage;
-		UInt32 maxStorageBuffersPerShaderStage;
-		UInt32 maxStorageTexturesPerShaderStage;
-		UInt32 maxUniformBuffersPerShaderStage;
-		UInt64 maxUniformBufferBindingSize;
-		UInt64 maxStorageBufferBindingSize;
-		UInt32 minUniformBufferOffsetAlignment;
-		UInt32 minStorageBufferOffsetAlignment;
-		UInt32 maxVertexBuffers;
-		UInt64 maxBufferSize;
-		UInt32 maxVertexAttributes;
-		UInt32 maxVertexBufferArrayStride;
-		UInt32 maxInterStageShaderVariables;
-		UInt32 maxColorAttachments;
-		UInt32 maxColorAttachmentBytesPerSample;
-		UInt32 maxComputeWorkgroupStorageSize;
-		UInt32 maxComputeInvocationsPerWorkgroup;
-		UInt32 maxComputeWorkgroupSizeX;
-		UInt32 maxComputeWorkgroupSizeY;
-		UInt32 maxComputeWorkgroupSizeZ;
-		UInt32 maxComputeWorkgroupsPerDimension;
-	};
-
+	// Enums
 	enum GPUAddressMode {
 		ClampToEdge,
 		Repeat,
@@ -67,6 +9,18 @@ namespace WebGPUWinRT
 
 	enum GPUAutoLayoutMode {
 		Auto
+	};
+
+	enum GPUBackendType {
+		Undefined = 0x00000000,
+		Null = 0x00000001,
+		WebGPU = 0x00000002,
+		D3D11 = 0x00000003,
+		D3D12 = 0x00000004,
+		Metal = 0x00000005,
+		Vulkan = 0x00000006,
+		OpenGL = 0x00000007,
+		OpenGLES = 0x00000008,
 	};
 
 	enum GPUBlendFactor {
@@ -105,6 +59,7 @@ namespace WebGPUWinRT
 		Mapped
 	};
 
+	[flags]
 	enum GPUBufferUsage {
 		MapRead = 0x0001,
 		MapWrite = 0x0002,
@@ -235,6 +190,7 @@ namespace WebGPUWinRT
 		Comparison
 	};
 
+	[flags]
 	enum GPUShaderStage {
 		Vertex = 0x1,
 		Fragment = 0x2,
@@ -452,7 +408,41 @@ namespace WebGPUWinRT
 		Instance
 	};
 
-	// Structs and other types
+	// Structs
+	struct GPUSupportedLimits {
+		UInt32 maxTextureDimension1D;
+		UInt32 maxTextureDimension2D;
+		UInt32 maxTextureDimension3D;
+		UInt32 maxTextureArrayLayers;
+		UInt32 maxBindGroups;
+		UInt32 maxBindGroupsPlusVertexBuffers;
+		UInt32 maxBindingsPerBindGroup;
+		UInt32 maxDynamicUniformBuffersPerPipelineLayout;
+		UInt32 maxDynamicStorageBuffersPerPipelineLayout;
+		UInt32 maxSampledTexturesPerShaderStage;
+		UInt32 maxSamplersPerShaderStage;
+		UInt32 maxStorageBuffersPerShaderStage;
+		UInt32 maxStorageTexturesPerShaderStage;
+		UInt32 maxUniformBuffersPerShaderStage;
+		UInt64 maxUniformBufferBindingSize;
+		UInt64 maxStorageBufferBindingSize;
+		UInt32 minUniformBufferOffsetAlignment;
+		UInt32 minStorageBufferOffsetAlignment;
+		UInt32 maxVertexBuffers;
+		UInt64 maxBufferSize;
+		UInt32 maxVertexAttributes;
+		UInt32 maxVertexBufferArrayStride;
+		UInt32 maxInterStageShaderVariables;
+		UInt32 maxColorAttachments;
+		UInt32 maxColorAttachmentBytesPerSample;
+		UInt32 maxComputeWorkgroupStorageSize;
+		UInt32 maxComputeInvocationsPerWorkgroup;
+		UInt32 maxComputeWorkgroupSizeX;
+		UInt32 maxComputeWorkgroupSizeY;
+		UInt32 maxComputeWorkgroupSizeZ;
+		UInt32 maxComputeWorkgroupsPerDimension;
+	};
+
 	struct GPURequestAdapterOptions {
 		String FeatureLevel;
 		GPUPowerPreference PowerPreference;
@@ -464,6 +454,98 @@ namespace WebGPUWinRT
 		GPUDeviceLostReason Reason;
 		String Message;
 	};
+
+	struct GPUBufferDescriptor {
+		String Label;
+		UInt64 Size;
+		GPUBufferUsage Usage;
+		Boolean MappedAtCreation;
+	};
+
+	struct GPUExtent3D {
+		UInt32 Width;
+		UInt32 Height;
+		UInt32 DepthOrArrayLayers;
+	};
+
+	struct GPUSamplerDescriptor {
+		String Label;
+		GPUAddressMode AddressModeU;
+		GPUAddressMode AddressModeV;
+		GPUAddressMode AddressModeW;
+		GPUFilterMode MagFilter;
+		GPUFilterMode MinFilter;
+		GPUMipmapFilterMode MipmapFilter;
+		Single LodMinClamp;
+		Single LodMaxClamp;
+		GPUCompareFunction Compare;
+		UInt16 MaxAnisotropy;
+	};
+
+	struct GPUShaderModuleDescriptor {
+		String Label;
+		String Code;
+	};
+
+	struct GPUCommandEncoderDescriptor {
+		String Label;
+	};
+
+	struct GPUQuerySetDescriptor {
+		String Label;
+		GPUQueryType Type;
+		UInt32 Count;
+	};
+
+	struct GPUBindGroupLayoutEntry {
+		UInt32 Binding;
+		GPUShaderStage Visibility;
+		// For simplicity, we'll need separate methods for different binding types
+		// rather than unions which aren't well supported in WinRT IDL
+	};
+
+	struct GPUColor {
+		Double R;
+		Double G;
+		Double B;
+		Double A;
+	};
+
+	struct GPUAdapterInfo
+	{
+		String Vendor;
+		String Architecture;
+		String Device;
+		String Description;
+		GPUBackendType BackendType;
+		Boolean IsFallbackAdapter;
+	};
+
+	// Interfaces
+	interface IGPUTextureView {
+		String Label { get; };
+	}
+	interface IGPUSampler {
+		String Label { get; };
+	}
+	interface IGPUExternalTexture {
+		String Label { get; };
+	}
+	interface IGPUBindGroupLayout {
+		String Label { get; };
+	}
+	interface IGPUPipelineLayout {
+		String Label { get; };
+	}
+	interface IGPUBindGroup {
+		String Label { get; };
+	}
+	interface IGPURenderBundle {
+		String Label { get; };
+	}
+	interface IGPUCommandBuffer {
+		String Label { get; };
+	}
 
 	interface IGPUError
 	{
@@ -485,22 +567,219 @@ namespace WebGPUWinRT
 	{
 	}
 
-	// Buffer related types
-	struct GPUBufferDescriptor {
-		String Label;
-		UInt64 Size;
-		UInt32 Usage; // GPUBufferUsage flags
-		Boolean MappedAtCreation;
+	interface IGPUBuffer requires Windows.Foundation.IClosable
+	{
+		String Label { get; };
+		UInt64 Size { get; };
+		GPUBufferUsage Usage { get; };
+		GPUBufferMapState MapState { get; };
+
+		Windows.Foundation.IAsyncAction MapAsync(UInt32 mode, UInt64 offset, UInt64 size);
+		Windows.Storage.Streams.IBuffer GetMappedRange(UInt64 offset, UInt64 size);
+		void Unmap();
 	};
 
-	// Texture related types
-	struct GPUExtent3D {
-		UInt32 Width;
-		UInt32 Height;
-		UInt32 DepthOrArrayLayers;
+	struct GPUTextureViewDescriptor {
+	String Label;
+	GPUTextureFormat Format;
+	GPUTextureViewDimension Dimension;
+	GPUTextureAspect Aspect;
+	UInt32 BaseMipLevel;
+	UInt32 MipLevelCount;
+	UInt32 BaseArrayLayer;
+	UInt32 ArrayLayerCount;
+};
+
+	interface IGPUTexture requires Windows.Foundation.IClosable
+	{
+		String Label { get; };
+		UInt32 Width { get; };
+		UInt32 Height { get; };
+		UInt32 DepthOrArrayLayers { get; };
+		UInt32 MipLevelCount { get; };
+		UInt32 SampleCount { get; };
+		GPUTextureDimension Dimension { get; };
+		GPUTextureFormat Format { get; };
+		GPUTextureUsage Usage { get; };
+
+		IGPUTextureView CreateView();
+		IGPUTextureView CreateView(GPUTextureViewDescriptor descriptor);
 	};
 
-	runtimeclass GPUTextureDescriptor {
+	interface IGPUShaderModule
+	{
+		String Label { get; };
+		Windows.Foundation.IAsyncOperation<IGPUCompilationInfo> GetCompilationInfo();
+	};
+
+	interface IGPUCompilationInfo
+	{
+		IVectorView<IGPUCompilationMessage> Messages { get; };
+	};
+
+	interface IGPUCompilationMessage
+	{
+		String Message { get; };
+		// Additional properties would be defined here
+	};
+
+	interface IGPUComputePipeline
+	{
+		String Label { get; };
+		IGPUBindGroupLayout GetBindGroupLayout(UInt32 index);
+	};
+
+	interface IGPURenderPipeline
+	{
+		String Label { get; };
+		IGPUBindGroupLayout GetBindGroupLayout(UInt32 index);
+	};
+
+	interface IGPUComputePassEncoder
+	{
+		String Label { get; };
+		void SetPipeline(IGPUComputePipeline pipeline);
+		void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
+		void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
+
+		void DispatchWorkgroups(UInt32 workgroupCountX, UInt32 workgroupCountY, UInt32 workgroupCountZ);
+		void DispatchWorkgroupsIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
+
+		void End();
+	};
+
+	interface IGPURenderPassEncoder
+	{
+		String Label { get; };
+		void SetPipeline(IGPURenderPipeline pipeline);
+		void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
+		void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
+
+		void SetVertexBuffer(UInt32 slot, IGPUBuffer buffer, UInt64 offset, UInt64 size);
+		void SetIndexBuffer(IGPUBuffer buffer, GPUIndexFormat format, UInt64 offset, UInt64 size);
+
+		void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance);
+		void DrawIndexed(UInt32 indexCount, UInt32 instanceCount, UInt32 firstIndex, Int32 baseVertex, UInt32 firstInstance);
+		void DrawIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
+		void DrawIndexedIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
+
+		void End();
+	};
+
+	interface IGPUCommandEncoder
+	{
+		String Label { get; };
+		IGPUComputePassEncoder BeginComputePass();
+		IGPUComputePassEncoder BeginComputePassWithDescriptor(GPUComputePassDescriptor descriptor);
+
+		IGPURenderPassEncoder BeginRenderPass(GPURenderPassDescriptor descriptor);
+
+		void CopyBufferToBuffer(IGPUBuffer source, UInt64 sourceOffset, IGPUBuffer destination, UInt64 destinationOffset, UInt64 size);
+		void CopyBufferToTexture(IGPUBuffer source, IGPUTexture destination, GPUExtent3D copySize);
+		void CopyTextureToBuffer(IGPUTexture source, IGPUBuffer destination, GPUExtent3D copySize);
+		void CopyTextureToTexture(IGPUTexture source, IGPUTexture destination, GPUExtent3D copySize);
+
+		void ResolveQuerySet(IGPUQuerySet querySet, UInt32 firstQuery, UInt32 queryCount, IGPUBuffer destination, UInt64 destinationOffset);
+
+		IGPUCommandBuffer Finish();
+		IGPUCommandBuffer FinishWithDescriptor(GPUCommandBufferDescriptor descriptor);
+	};
+
+	interface IGPURenderBundleEncoder
+	{
+		String Label { get; };
+		void SetPipeline(IGPURenderPipeline pipeline);
+		void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
+		void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
+
+		void SetVertexBuffer(UInt32 slot, IGPUBuffer buffer, UInt64 offset, UInt64 size);
+		void SetIndexBuffer(IGPUBuffer buffer, GPUIndexFormat format, UInt64 offset, UInt64 size);
+
+		void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance);
+		void DrawIndexed(UInt32 indexCount, UInt32 instanceCount, UInt32 firstIndex, Int32 baseVertex, UInt32 firstInstance);
+		void DrawIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
+		void DrawIndexedIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
+
+		IGPURenderBundle Finish();
+		IGPURenderBundle FinishWithDescriptor(GPURenderBundleDescriptor descriptor);
+	};
+
+	interface IGPUQuerySet requires Windows.Foundation.IClosable
+	{
+		String Label { get; };
+		GPUQueryType Type { get; };
+		UInt32 Count { get; };
+	};
+
+	interface IGPUQueue
+	{
+		String Label { get; };
+		void Submit(IVectorView<IGPUCommandBuffer> commandBuffers);
+		Windows.Foundation.IAsyncAction OnSubmittedWorkDone();
+
+		void WriteBuffer(IGPUBuffer buffer, UInt64 bufferOffset, Windows.Storage.Streams.IBuffer data, UInt64 dataOffset, UInt64 size);
+		void WriteTexture(IGPUTexture destination, Windows.Storage.Streams.IBuffer data, GPUExtent3D size);
+	};
+
+	interface IGPUAdapter
+	{
+		IVectorView<GPUFeature> Features { get; };
+		GPUSupportedLimits Limits { get; };
+		GPUAdapterInfo Info { get; };
+
+		Windows.Foundation.IAsyncOperation<IGPUDevice> RequestDevice();
+		Windows.Foundation.IAsyncOperation<IGPUDevice> RequestDevice(GPUDeviceDescriptor descriptor);
+	};
+
+	interface IGPUDevice requires Windows.Foundation.IClosable
+	{
+		String Label { get; };
+		IVectorView<GPUFeature> Features { get; };
+		GPUSupportedLimits Limits { get; };
+		GPUAdapterInfo AdapterInfo { get; };
+		IGPUQueue Queue { get; };
+
+		// Device lost promise
+		Windows.Foundation.IAsyncOperation<GPUDeviceLostInfo> Lost { get; };
+
+		// Resource creation methods
+		IGPUBuffer CreateBuffer(GPUBufferDescriptor descriptor);
+		IGPUTexture CreateTexture(GPUTextureDescriptor descriptor);
+		IGPUSampler CreateSampler();
+		IGPUSampler CreateSamplerWithDescriptor(GPUSamplerDescriptor descriptor);
+		IGPUExternalTexture ImportExternalTexture(GPUExternalTextureDescriptor descriptor);
+
+		// Pipeline and binding creation
+		IGPUBindGroupLayout CreateBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
+		IGPUPipelineLayout CreatePipelineLayout(GPUPipelineLayoutDescriptor descriptor);
+		IGPUBindGroup CreateBindGroup(GPUBindGroupDescriptor descriptor);
+
+		// Shader and pipeline creation
+		IGPUShaderModule CreateShaderModule(GPUShaderModuleDescriptor descriptor);
+		IGPUComputePipeline CreateComputePipeline(GPUComputePipelineDescriptor descriptor);
+		IGPURenderPipeline CreateRenderPipeline(GPURenderPipelineDescriptor descriptor);
+		Windows.Foundation.IAsyncOperation<IGPUComputePipeline> CreateComputePipelineAsync(GPUComputePipelineDescriptor descriptor);
+		Windows.Foundation.IAsyncOperation<IGPURenderPipeline> CreateRenderPipelineAsync(GPURenderPipelineDescriptor descriptor);
+
+		// Command recording
+		IGPUCommandEncoder CreateCommandEncoder();
+		IGPUCommandEncoder CreateCommandEncoderWithDescriptor(GPUCommandEncoderDescriptor descriptor);
+		IGPURenderBundleEncoder CreateRenderBundleEncoder(GPURenderBundleEncoderDescriptor descriptor);
+
+		// Query sets
+		IGPUQuerySet CreateQuerySet(GPUQuerySetDescriptor descriptor);
+
+		// Error handling
+		void PushErrorScope(GPUErrorFilter filter);
+		Windows.Foundation.IAsyncOperation<IGPUError> PopErrorScope();
+
+		// Events
+		event Windows.Foundation.TypedEventHandler<IGPUDevice, IGPUError> UncapturedError;
+	};
+
+	// Runtime classes
+	[default_interface]
+	runtimeclass GPUTextureDescriptor{
 		String Label;
 		GPUExtent3D Size;
 		UInt32 MipLevelCount;
@@ -509,27 +788,6 @@ namespace WebGPUWinRT
 		GPUTextureFormat Format;
 		UInt32 Usage; // GPUTextureUsage flags
 		IVectorView<GPUTextureFormat> ViewFormats;
-	};
-
-	// Sampler related types
-	struct GPUSamplerDescriptor {
-		String Label;
-		GPUAddressMode AddressModeU;
-		GPUAddressMode AddressModeV;
-		GPUAddressMode AddressModeW;
-		GPUFilterMode MagFilter;
-		GPUFilterMode MinFilter;
-		GPUMipmapFilterMode MipmapFilter;
-		Single LodMinClamp;
-		Single LodMaxClamp;
-		GPUCompareFunction Compare;
-		UInt16 MaxAnisotropy;
-	};
-
-	// Shader related types
-	struct GPUShaderModuleDescriptor {
-		String Label;
-		String Code;
 	};
 
 	[default_interface]
@@ -559,40 +817,6 @@ namespace WebGPUWinRT
 		IGPUPipelineLayout Layout;
 	};
 
-	// Command related types
-	struct GPUCommandEncoderDescriptor {
-		String Label;
-	};
-
-	struct GPUQuerySetDescriptor {
-		String Label;
-		GPUQueryType Type;
-		UInt32 Count;
-	};
-
-
-	// Bind group related types
-	struct GPUBindGroupLayoutEntry {
-		UInt32 Binding;
-		UInt32 Visibility; // GPUShaderStageFlags
-		// For simplicity, we'll need separate methods for different binding types
-		// rather than unions which aren't well supported in WinRT IDL
-	};
-
-	// Interface declarations for GPU objects
-	interface IGPUBuffer requires Windows.Foundation.IClosable
-	{
-		String Label { get; };
-		UInt64 Size { get; };
-		UInt32 Usage { get; };
-		GPUBufferMapState MapState { get; };
-
-		Windows.Foundation.IAsyncAction MapAsync(UInt32 mode, UInt64 offset, UInt64 size);
-		Windows.Storage.Streams.IBuffer GetMappedRange(UInt64 offset, UInt64 size);
-		void Unmap();
-	};
-
-
 	[default_interface]
 	runtimeclass GPUBindGroupLayoutDescriptor
 	{
@@ -601,8 +825,9 @@ namespace WebGPUWinRT
 		IVectorView<GPUBindGroupLayoutEntry> Entries;
 	};
 
-
-	runtimeclass GPUBindGroupEntry {
+	[default_interface]
+	runtimeclass GPUBindGroupEntry
+	{
 		UInt32 Binding;
 	// Resource would be a variant - simplified for WinRT
 	IGPUBuffer Buffer;
@@ -639,65 +864,6 @@ runtimeclass GPURenderBundleEncoderDescriptor {
 	Boolean StencilReadOnly;
 };
 
-interface IGPUTexture requires Windows.Foundation.IClosable
-{
-	String Label { get; };
-	UInt32 Width { get; };
-	UInt32 Height { get; };
-	UInt32 DepthOrArrayLayers { get; };
-	UInt32 MipLevelCount { get; };
-	UInt32 SampleCount { get; };
-	GPUTextureDimension Dimension { get; };
-	GPUTextureFormat Format { get; };
-	UInt32 Usage { get; };
-
-	IGPUTextureView CreateView();
-	IGPUTextureView CreateViewWithDescriptor(GPUTextureViewDescriptor descriptor);
-};
-
-
-interface IGPUShaderModule
-{
-	String Label { get; };
-	Windows.Foundation.IAsyncOperation<IGPUCompilationInfo> GetCompilationInfo();
-};
-
-interface IGPUCompilationInfo
-{
-	IVectorView<IGPUCompilationMessage> Messages { get; };
-};
-
-interface IGPUCompilationMessage
-{
-	String Message { get; };
-	// Additional properties would be defined here
-};
-
-interface IGPUComputePipeline
-{
-	String Label { get; };
-	IGPUBindGroupLayout GetBindGroupLayout(UInt32 index);
-};
-
-interface IGPURenderPipeline
-{
-	String Label { get; };
-	IGPUBindGroupLayout GetBindGroupLayout(UInt32 index);
-};
-
-interface IGPUComputePassEncoder
-{
-	String Label { get; };
-	void SetPipeline(IGPUComputePipeline pipeline);
-	void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
-	void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
-
-	void DispatchWorkgroups(UInt32 workgroupCountX, UInt32 workgroupCountY, UInt32 workgroupCountZ);
-	void DispatchWorkgroupsIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
-
-	void End();
-};
-
 [default_interface]
 runtimeclass GPURenderPassDescriptor
 {
@@ -709,92 +875,8 @@ runtimeclass GPURenderPassDescriptor
 	UInt64 MaxDrawCount;
 };
 
-// Additional types needed for render pass and compute pass
 runtimeclass GPUComputePassDescriptor {
 	String Label;
-};
-
-interface IGPURenderPassEncoder
-{
-	String Label { get; };
-	void SetPipeline(IGPURenderPipeline pipeline);
-	void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
-	void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
-
-	void SetVertexBuffer(UInt32 slot, IGPUBuffer buffer, UInt64 offset, UInt64 size);
-	void SetIndexBuffer(IGPUBuffer buffer, GPUIndexFormat format, UInt64 offset, UInt64 size);
-
-	void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance);
-	void DrawIndexed(UInt32 indexCount, UInt32 instanceCount, UInt32 firstIndex, Int32 baseVertex, UInt32 firstInstance);
-	void DrawIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
-	void DrawIndexedIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
-
-	void End();
-};
-
-
-interface IGPUCommandEncoder
-{
-	String Label { get; };
-	IGPUComputePassEncoder BeginComputePass();
-	IGPUComputePassEncoder BeginComputePassWithDescriptor(GPUComputePassDescriptor descriptor);
-
-	IGPURenderPassEncoder BeginRenderPass(GPURenderPassDescriptor descriptor);
-
-	void CopyBufferToBuffer(IGPUBuffer source, UInt64 sourceOffset, IGPUBuffer destination, UInt64 destinationOffset, UInt64 size);
-	void CopyBufferToTexture(IGPUBuffer source, IGPUTexture destination, GPUExtent3D copySize);
-	void CopyTextureToBuffer(IGPUTexture source, IGPUBuffer destination, GPUExtent3D copySize);
-	void CopyTextureToTexture(IGPUTexture source, IGPUTexture destination, GPUExtent3D copySize);
-
-	void ResolveQuerySet(IGPUQuerySet querySet, UInt32 firstQuery, UInt32 queryCount, IGPUBuffer destination, UInt64 destinationOffset);
-
-	IGPUCommandBuffer Finish();
-	IGPUCommandBuffer FinishWithDescriptor(GPUCommandBufferDescriptor descriptor);
-};
-
-
-interface IGPURenderBundleEncoder
-{
-	String Label { get; };
-	void SetPipeline(IGPURenderPipeline pipeline);
-	void SetBindGroup(UInt32 index, IGPUBindGroup bindGroup);
-	void SetBindGroupWithOffsets(UInt32 index, IGPUBindGroup bindGroup, IVectorView<UInt32> dynamicOffsets);
-
-	void SetVertexBuffer(UInt32 slot, IGPUBuffer buffer, UInt64 offset, UInt64 size);
-	void SetIndexBuffer(IGPUBuffer buffer, GPUIndexFormat format, UInt64 offset, UInt64 size);
-
-	void Draw(UInt32 vertexCount, UInt32 instanceCount, UInt32 firstVertex, UInt32 firstInstance);
-	void DrawIndexed(UInt32 indexCount, UInt32 instanceCount, UInt32 firstIndex, Int32 baseVertex, UInt32 firstInstance);
-	void DrawIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
-	void DrawIndexedIndirect(IGPUBuffer indirectBuffer, UInt64 indirectOffset);
-
-	IGPURenderBundle Finish();
-	IGPURenderBundle FinishWithDescriptor(GPURenderBundleDescriptor descriptor);
-};
-
-interface IGPUQuerySet requires Windows.Foundation.IClosable
-{
-	String Label { get; };
-	GPUQueryType Type { get; };
-	UInt32 Count { get; };
-};
-
-interface IGPUQueue
-{
-	String Label { get; };
-	void Submit(IVectorView<IGPUCommandBuffer> commandBuffers);
-	Windows.Foundation.IAsyncAction OnSubmittedWorkDone();
-
-	void WriteBuffer(IGPUBuffer buffer, UInt64 bufferOffset, Windows.Storage.Streams.IBuffer data, UInt64 dataOffset, UInt64 size);
-	void WriteTexture(IGPUTexture destination, Windows.Storage.Streams.IBuffer data, GPUExtent3D size);
-};
-
-
-struct GPUColor {
-	Double R;
-	Double G;
-	Double B;
-	Double A;
 };
 
 [default_interface]
@@ -832,28 +914,9 @@ runtimeclass GPURenderBundleDescriptor {
 	String Label;
 };
 
-runtimeclass GPUTextureViewDescriptor {
-	String Label;
-	GPUTextureFormat Format;
-	GPUTextureViewDimension Dimension;
-	GPUTextureAspect Aspect;
-	UInt32 BaseMipLevel;
-	UInt32 MipLevelCount;
-	UInt32 BaseArrayLayer;
-	UInt32 ArrayLayerCount;
-};
 
-struct GPUAdapterInfo
-{
-	String Vendor;
-	String Architecture;
-	String Device;
-	String Description;
-	UInt32 SubgroupMinSize;
-	UInt32 SubgroupMaxSize;
-	Boolean IsFallbackAdapter;
-};
 
+[default_interface]
 runtimeclass GPUDeviceDescriptor {
 	String Label;
 	IVectorView<GPUFeature> RequiredFeatures;
@@ -861,71 +924,13 @@ runtimeclass GPUDeviceDescriptor {
 	GPUQueueDescriptor DefaultQueue;
 };
 
-interface IGPUAdapter
-{
-	IVectorView<GPUFeature> Features { get; };
-	GPUSupportedLimits Limits { get; };
-	GPUAdapterInfo Info { get; };
-
-	Windows.Foundation.IAsyncOperation<IGPUDevice> RequestDevice();
-	Windows.Foundation.IAsyncOperation<IGPUDevice> RequestDeviceWithDescriptor(GPUDeviceDescriptor descriptor);
-};
-
-
-interface IGPUDevice requires Windows.Foundation.IClosable
-{
-	String Label { get; };
-	IVectorView<GPUFeature> Features { get; };
-	GPUSupportedLimits Limits { get; };
-	GPUAdapterInfo AdapterInfo { get; };
-	IGPUQueue Queue { get; };
-
-	// Device lost promise
-	Windows.Foundation.IAsyncOperation<GPUDeviceLostInfo> Lost { get; };
-
-	// Resource creation methods
-	IGPUBuffer CreateBuffer(GPUBufferDescriptor descriptor);
-	IGPUTexture CreateTexture(GPUTextureDescriptor descriptor);
-	IGPUSampler CreateSampler();
-	IGPUSampler CreateSamplerWithDescriptor(GPUSamplerDescriptor descriptor);
-	IGPUExternalTexture ImportExternalTexture(GPUExternalTextureDescriptor descriptor);
-
-	// Pipeline and binding creation
-	IGPUBindGroupLayout CreateBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
-	IGPUPipelineLayout CreatePipelineLayout(GPUPipelineLayoutDescriptor descriptor);
-	IGPUBindGroup CreateBindGroup(GPUBindGroupDescriptor descriptor);
-
-	// Shader and pipeline creation
-	IGPUShaderModule CreateShaderModule(GPUShaderModuleDescriptor descriptor);
-	IGPUComputePipeline CreateComputePipeline(GPUComputePipelineDescriptor descriptor);
-	IGPURenderPipeline CreateRenderPipeline(GPURenderPipelineDescriptor descriptor);
-	Windows.Foundation.IAsyncOperation<IGPUComputePipeline> CreateComputePipelineAsync(GPUComputePipelineDescriptor descriptor);
-	Windows.Foundation.IAsyncOperation<IGPURenderPipeline> CreateRenderPipelineAsync(GPURenderPipelineDescriptor descriptor);
-
-	// Command recording
-	IGPUCommandEncoder CreateCommandEncoder();
-	IGPUCommandEncoder CreateCommandEncoderWithDescriptor(GPUCommandEncoderDescriptor descriptor);
-	IGPURenderBundleEncoder CreateRenderBundleEncoder(GPURenderBundleEncoderDescriptor descriptor);
-
-	// Query sets
-	IGPUQuerySet CreateQuerySet(GPUQuerySetDescriptor descriptor);
-
-	// Error handling
-	void PushErrorScope(GPUErrorFilter filter);
-	Windows.Foundation.IAsyncOperation<IGPUError> PopErrorScope();
-
-	// Events
-	event Windows.Foundation.TypedEventHandler<IGPUDevice, IGPUError> UncapturedError;
-};
-
-
 [default_interface]
 runtimeclass GPU
 {
 	GPU();
 	Windows.Foundation.IAsyncOperation<IGPUAdapter> RequestAdapter();
-	Windows.Foundation.IAsyncOperation<IGPUAdapter> RequestAdapterWithOptions(GPURequestAdapterOptions options);
-	GPUTextureFormat GetPreferredCanvasFormat();
+	Windows.Foundation.IAsyncOperation<IGPUAdapter> RequestAdapter(GPURequestAdapterOptions options);
+	//GPUTextureFormat GetPreferredCanvasFormat(); // no-direct mapping in webgpu-native
 	//IWGSLLanguageFeatures WgslLanguageFeatures;
 }
 }

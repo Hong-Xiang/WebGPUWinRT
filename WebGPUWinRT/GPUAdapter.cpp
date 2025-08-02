@@ -8,44 +8,7 @@ namespace winrt::WebGPUWinRT::implementation
 {
 	using namespace winrt;
 
-	GPUAdapter::GPUAdapter(const implementation::GPU& gpu) : m_gpu(gpu), handle(nullptr) {
-		WGPURequestAdapterOptions adapterOpts = {};
-		adapterOpts.nextInChain = nullptr;
-
-		struct UserData {
-			WGPUAdapter adapter = nullptr;
-			bool requestEnded = false;
-		};
-		UserData userData{};
-
-		auto onAdapterRequestEnded = [](WGPURequestAdapterStatus status, WGPUAdapter adapter, WGPUStringView message, void* pUserData, void* _) {
-			UserData& userData = *reinterpret_cast<UserData*>(pUserData);
-			if (status == WGPURequestAdapterStatus_Success) {
-				userData.adapter = adapter;
-			}
-			else {
-				std::cout << "Could not get WebGPU adapter: " << interop::to_string(message) << std::endl;
-			}
-			userData.requestEnded = true;
-			};
-
-		wgpuInstanceRequestAdapter(
-			gpu.handle,
-			&adapterOpts,
-			{
-				.callback = onAdapterRequestEnded,
-				.userdata1 = &userData,
-			}
-			);
-
-		while (!userData.requestEnded) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		}
-
-		handle = userData.adapter;
-		if (handle == nullptr) {
-			throw std::runtime_error("Failed to get GPUAdapter");
-		}
+	GPUAdapter::GPUAdapter(WGPUAdapter handle) : handle(handle) {
 	}
 
 	winrt::Windows::Foundation::Collections::IVectorView<WebGPUWinRT::GPUFeature> GPUAdapter::Features() const {
@@ -65,12 +28,24 @@ namespace winrt::WebGPUWinRT::implementation
 		return single_threaded_vector(std::move(features)).GetView();
 	}
 
+	winrt::WebGPUWinRT::GPUAdapterInfo GPUAdapter::Info() const {
+		WGPUAdapterInfo info = {};
+		wgpuAdapterGetInfo(handle, &info);
+		return interop::to(info);
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::WebGPUWinRT::IGPUDevice> GPUAdapter::RequestDevice() {
+		throw hresult_not_implemented();
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<winrt::WebGPUWinRT::IGPUDevice> GPUAdapter::RequestDevice(winrt::WebGPUWinRT::GPUDeviceDescriptor descriptor) {
+		throw hresult_not_implemented();
+	}
+
+
 
 	winrt::WebGPUWinRT::GPUSupportedLimits GPUAdapter::Limits() const
 	{
-		WGPUAdapterInfo info = {};
-		wgpuAdapterGetInfo(handle, &info);
-
 		WGPULimits limits{};
 		wgpuAdapterGetLimits(handle, &limits);
 		return interop::to(limits);

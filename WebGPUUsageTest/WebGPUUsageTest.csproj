@@ -23,6 +23,12 @@
 	  <ProjectReference Include="..\WebGPUWinRT\WebGPUWinRT.vcxproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="wgpu_native.dll">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 	<!--<ItemGroup>
 	  <ProjectReference Include="..\WebGPUWinRT.Projection\WebGPUWinRT.Projection.csproj" />
 	</ItemGroup>-->
