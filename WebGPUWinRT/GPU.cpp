@@ -20,12 +20,13 @@ namespace winrt::WebGPUWinRT::implementation
 	{
 		WGPURequestAdapterOptions adapterOpts = {};
 		adapterOpts.nextInChain = nullptr;
+		//winrt::
 
-		struct UserData {
-			WGPUAdapter adapter = nullptr;
-			bool requestEnded = false;
-		};
-		auto userData{ std::make_shared<UserData>() };
+		//struct UserData {
+		//	WGPUAdapter adapter = nullptr;
+		//	bool requestEnded = false;
+		//};
+		//auto userData{ std::make_shared<UserData>() };
 
 		auto promise = std::make_shared<std::promise<WGPUAdapter>>();
 
@@ -33,7 +34,7 @@ namespace winrt::WebGPUWinRT::implementation
 			auto p = static_cast<std::promise<WGPUAdapter>*>(userdata);
 			if (status == WGPURequestAdapterStatus_Success)
 			{
-				std::cout << "Got adapter in async" << std::endl;
+				std::cout << "Got adapter in async using resume background" << std::endl;
 				p->set_value(adapter);
 			}
 			else
@@ -48,6 +49,7 @@ namespace winrt::WebGPUWinRT::implementation
 			});
 
 		// TODO: use correct async implementation
+		co_await winrt::resume_background();
 		auto result = promise->get_future().get();
 		co_return make<implementation::GPUAdapter>(result);
 	}
