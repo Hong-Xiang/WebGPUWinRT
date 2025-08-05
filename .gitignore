@@ -57,7 +57,7 @@ Makefile
 *.dwo
 
 WebGPU-distribution
-wgpu-native/
+wgpu-native/lib
 Generated Files/
 x64/
 packages/
