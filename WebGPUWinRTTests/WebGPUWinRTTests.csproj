@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<Platforms>AnyCPU;x64</Platforms>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<CsWinRTIncludes>WebGPUWinRT</CsWinRTIncludes>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" Version="6.0.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+		<PackageReference Include="xunit" Version="2.9.2" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+
+		<PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.2.0" />
+		<!-- <PackageReference Include="WebGPUWinRT" Version="0.0.7-prerelease" /> -->
+
+		<ProjectReference Include="..\WebGPUWinRT\WebGPUWinRT.vcxproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+		<Content Include="..\wgpu-native\lib\wgpu_native.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+
+	</ItemGroup>
+
+	<ItemGroup>
+	  <!-- <ProjectReference Include="..\WebGPUWinRT.Projection\WebGPUWinRT.Projection.csproj" /> -->
+	</ItemGroup>
+
+</Project>

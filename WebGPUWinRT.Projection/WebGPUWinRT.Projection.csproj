@@ -9,7 +9,7 @@
 		<Platforms>AnyCPU;x64</Platforms>
 		<GeneratedNugetDir>.\nuget\</GeneratedNugetDir>
 		<NuspecFile>$(GeneratedNugetDir)WebGPUWinRT.Projection.nuspec</NuspecFile>
-		<OutputPath>$(GeneratedNugetDir)</OutputPath>
+		<OutputPath>$(NugetOutDir)</OutputPath>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 

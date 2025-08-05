@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <BuildOutDir>$([MSBuild]::NormalizeDirectory('$(SolutionDir)', 'build', '$(Platform)', '$(Configuration)'))</BuildOutDir>
+    <NugetOutDir>$([MSBuild]::NormalizeDirectory('$(SolutionDir)', 'build', '$(Platform)', '$(Configuration)', 'nuget'))</NugetOutDir>
     <OutDir>$([MSBuild]::NormalizeDirectory('$(BuildOutDir)', '$(MSBuildProjectName)', 'bin'))</OutDir>
     <IntDir>$([MSBuild]::NormalizeDirectory('$(BuildOutDir)', '$(MSBuildProjectName)', 'obj'))</IntDir>
   </PropertyGroup>

@@ -164,6 +164,7 @@
     <ClInclude Include="GPUCommandBufferDescriptor.h" />
     <ClInclude Include="GPUComputePassDescriptor.h" />
     <ClInclude Include="GPUComputePipelineDescriptor.h" />
+    <ClInclude Include="GPUDevice.h" />
     <ClInclude Include="GPUDeviceDescriptor.h" />
     <ClInclude Include="GPUExternalTextureDescriptor.h" />
     <ClInclude Include="GPUPipelineLayoutDescriptor.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="GPUCommandBufferDescriptor.cpp" />
     <ClCompile Include="GPUComputePassDescriptor.cpp" />
     <ClCompile Include="GPUComputePipelineDescriptor.cpp" />
+    <ClCompile Include="GPUDevice.cpp" />
     <ClCompile Include="GPUDeviceDescriptor.cpp" />
     <ClCompile Include="GPUExternalTextureDescriptor.cpp" />
     <ClCompile Include="GPUPipelineLayoutDescriptor.cpp" />

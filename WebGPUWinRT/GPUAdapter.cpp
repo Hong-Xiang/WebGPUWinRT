@@ -2,6 +2,8 @@
 #include "GPUAdapter.h"
 #include <iostream>
 #include "Interop.h"
+#include "GPUDevice.h"
+#include "GPUDeviceDescriptor.h"
 
 
 namespace winrt::WebGPUWinRT::implementation
@@ -35,11 +37,27 @@ namespace winrt::WebGPUWinRT::implementation
 	}
 
 	winrt::Windows::Foundation::IAsyncOperation<winrt::WebGPUWinRT::IGPUDevice> GPUAdapter::RequestDevice() {
-		throw hresult_not_implemented();
+		std::cout << "RequestDevice" << std::endl;
+		//throw hresult_not_implemented();
+		return RequestDevice(make<winrt::WebGPUWinRT::implementation::GPUDeviceDescriptor>());
 	}
+	struct RequestDeviceTrait {
+		using handle = WGPUAdapter;
+		using option = WGPUDeviceDescriptor;
+		using status = WGPURequestDeviceStatus;
+		using data = WGPUDevice;
+		using result = winrt::WebGPUWinRT::IGPUDevice;
+		static void api(handle h, option* o, WGPURequestDeviceCallbackInfo c) {
+			wgpuAdapterRequestDevice(h, o, c);
+		};
+		static result to(data d) {
+			return make<implementation::GPUDevice>(d);
+		}
+	};
 
 	winrt::Windows::Foundation::IAsyncOperation<winrt::WebGPUWinRT::IGPUDevice> GPUAdapter::RequestDevice(winrt::WebGPUWinRT::GPUDeviceDescriptor descriptor) {
-		throw hresult_not_implemented();
+		std::cout << "RequestDevice with option" << std::endl;
+		return interop::from_async<RequestDeviceTrait>(handle, interop::from(descriptor));
 	}
 
 

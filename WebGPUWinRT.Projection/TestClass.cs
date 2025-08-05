@@ -6,7 +6,5 @@ public class TestClass
     {
         var gpu = new GPU();
         var adaptor = gpu.RequestAdapter();
-        var limits = adaptor.Limits;
-        Console.WriteLine($"maxBindGroups: {limits.maxBindingsPerBindGroup}");
     }
 }

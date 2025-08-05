@@ -107,4 +107,56 @@ namespace interop {
 			.Description = winrt::to_hstring(to(info.description)),
 		};
 	}
+
+	WGPUPowerPreference from(winrt::WebGPUWinRT::GPUPowerPreference powerPreference)
+	{
+		switch (powerPreference) {
+		case winrt::WebGPUWinRT::GPUPowerPreference::LowPower:
+			return WGPUPowerPreference_LowPower;
+		case winrt::WebGPUWinRT::GPUPowerPreference::HighPerformance:
+			return WGPUPowerPreference_HighPerformance;
+		default:
+			return WGPUPowerPreference_HighPerformance;
+		}
+	}
+
+	WGPUBackendType from(winrt::WebGPUWinRT::GPUBackendType backendType)
+	{
+		switch (backendType) {
+		case winrt::WebGPUWinRT::GPUBackendType::D3D12:
+			return WGPUBackendType_D3D12;
+		case winrt::WebGPUWinRT::GPUBackendType::Metal:
+			return WGPUBackendType_Metal;
+		case winrt::WebGPUWinRT::GPUBackendType::Vulkan:
+			return WGPUBackendType_Vulkan;
+		default:
+			return WGPUBackendType_D3D12;
+		}
+	}
+
+	WGPUStringView from(winrt::hstring str)
+	{
+		auto s8 = winrt::to_string(str);
+		auto result = WGPUStringView{};
+		result.data = s8.c_str();
+		result.length = s8.length();
+		return result;
+	}
+
+	WGPUDeviceDescriptor from(winrt::WebGPUWinRT::GPUDeviceDescriptor descriptor)
+	{
+		auto result = WGPUDeviceDescriptor{
+			.label = from(descriptor.Label()),
+		};
+		return result;
+	}
+
+	WGPURequestAdapterOptions from(winrt::WebGPUWinRT::GPURequestAdapterOptions options) {
+		auto result = WGPURequestAdapterOptions{};
+		// TODO: mapping options
+		result.backendType = from(options.BackendType);
+		result.powerPreference = from(options.PowerPreference);
+		result.featureLevel = WGPUFeatureLevel_Core;
+		return result;
+	}
 }

@@ -32,6 +32,7 @@
     <ClCompile Include="GPURenderPassDescriptor.cpp" />
     <ClCompile Include="GPURenderPipelineDescriptor.cpp" />
     <ClCompile Include="GPUTextureDescriptor.cpp" />
+    <ClCompile Include="GPUDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -53,6 +54,7 @@
     <ClInclude Include="GPURenderPassDescriptor.h" />
     <ClInclude Include="GPURenderPipelineDescriptor.h" />
     <ClInclude Include="GPUTextureDescriptor.h" />
+    <ClInclude Include="GPUDevice.h" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="WebGPUWinRT.idl" />

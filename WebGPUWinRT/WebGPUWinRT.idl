@@ -446,6 +446,7 @@ namespace WebGPUWinRT
 	struct GPURequestAdapterOptions {
 		String FeatureLevel;
 		GPUPowerPreference PowerPreference;
+		GPUBackendType BackendType;
 		Boolean ForceFallbackAdapter;
 		Boolean XrCompatible;
 	};
@@ -733,48 +734,48 @@ namespace WebGPUWinRT
 
 	interface IGPUDevice requires Windows.Foundation.IClosable
 	{
-		String Label { get; };
-		IVectorView<GPUFeature> Features { get; };
+		//String Label { get; };
+		//IVectorView<GPUFeature> Features { get; };
 		GPUSupportedLimits Limits { get; };
-		GPUAdapterInfo AdapterInfo { get; };
-		IGPUQueue Queue { get; };
+		//GPUAdapterInfo AdapterInfo { get; };
+		//IGPUQueue Queue { get; };
 
 		// Device lost promise
-		Windows.Foundation.IAsyncOperation<GPUDeviceLostInfo> Lost { get; };
+		//Windows.Foundation.IAsyncOperation<GPUDeviceLostInfo> Lost { get; };
 
 		// Resource creation methods
-		IGPUBuffer CreateBuffer(GPUBufferDescriptor descriptor);
-		IGPUTexture CreateTexture(GPUTextureDescriptor descriptor);
-		IGPUSampler CreateSampler();
-		IGPUSampler CreateSamplerWithDescriptor(GPUSamplerDescriptor descriptor);
-		IGPUExternalTexture ImportExternalTexture(GPUExternalTextureDescriptor descriptor);
+		//IGPUBuffer CreateBuffer(GPUBufferDescriptor descriptor);
+		//IGPUTexture CreateTexture(GPUTextureDescriptor descriptor);
+		//IGPUSampler CreateSampler();
+		//IGPUSampler CreateSamplerWithDescriptor(GPUSamplerDescriptor descriptor);
+		//IGPUExternalTexture ImportExternalTexture(GPUExternalTextureDescriptor descriptor);
 
 		// Pipeline and binding creation
-		IGPUBindGroupLayout CreateBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
-		IGPUPipelineLayout CreatePipelineLayout(GPUPipelineLayoutDescriptor descriptor);
-		IGPUBindGroup CreateBindGroup(GPUBindGroupDescriptor descriptor);
+		//IGPUBindGroupLayout CreateBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
+		//IGPUPipelineLayout CreatePipelineLayout(GPUPipelineLayoutDescriptor descriptor);
+		//IGPUBindGroup CreateBindGroup(GPUBindGroupDescriptor descriptor);
 
 		// Shader and pipeline creation
-		IGPUShaderModule CreateShaderModule(GPUShaderModuleDescriptor descriptor);
-		IGPUComputePipeline CreateComputePipeline(GPUComputePipelineDescriptor descriptor);
-		IGPURenderPipeline CreateRenderPipeline(GPURenderPipelineDescriptor descriptor);
-		Windows.Foundation.IAsyncOperation<IGPUComputePipeline> CreateComputePipelineAsync(GPUComputePipelineDescriptor descriptor);
-		Windows.Foundation.IAsyncOperation<IGPURenderPipeline> CreateRenderPipelineAsync(GPURenderPipelineDescriptor descriptor);
+		//IGPUShaderModule CreateShaderModule(GPUShaderModuleDescriptor descriptor);
+		//IGPUComputePipeline CreateComputePipeline(GPUComputePipelineDescriptor descriptor);
+		//IGPURenderPipeline CreateRenderPipeline(GPURenderPipelineDescriptor descriptor);
+		//Windows.Foundation.IAsyncOperation<IGPUComputePipeline> CreateComputePipelineAsync(GPUComputePipelineDescriptor descriptor);
+		//Windows.Foundation.IAsyncOperation<IGPURenderPipeline> CreateRenderPipelineAsync(GPURenderPipelineDescriptor descriptor);
 
 		// Command recording
-		IGPUCommandEncoder CreateCommandEncoder();
-		IGPUCommandEncoder CreateCommandEncoderWithDescriptor(GPUCommandEncoderDescriptor descriptor);
-		IGPURenderBundleEncoder CreateRenderBundleEncoder(GPURenderBundleEncoderDescriptor descriptor);
+		//IGPUCommandEncoder CreateCommandEncoder();
+		//IGPUCommandEncoder CreateCommandEncoderWithDescriptor(GPUCommandEncoderDescriptor descriptor);
+		//IGPURenderBundleEncoder CreateRenderBundleEncoder(GPURenderBundleEncoderDescriptor descriptor);
 
 		// Query sets
-		IGPUQuerySet CreateQuerySet(GPUQuerySetDescriptor descriptor);
+		//IGPUQuerySet CreateQuerySet(GPUQuerySetDescriptor descriptor);
 
 		// Error handling
-		void PushErrorScope(GPUErrorFilter filter);
-		Windows.Foundation.IAsyncOperation<IGPUError> PopErrorScope();
+		//void PushErrorScope(GPUErrorFilter filter);
+		//Windows.Foundation.IAsyncOperation<IGPUError> PopErrorScope();
 
 		// Events
-		event Windows.Foundation.TypedEventHandler<IGPUDevice, IGPUError> UncapturedError;
+		//event Windows.Foundation.TypedEventHandler<IGPUDevice, IGPUError> UncapturedError; 
 	};
 
 	// Runtime classes
@@ -875,6 +876,7 @@ runtimeclass GPURenderPassDescriptor
 	UInt64 MaxDrawCount;
 };
 
+[default_interface]
 runtimeclass GPUComputePassDescriptor {
 	String Label;
 };
