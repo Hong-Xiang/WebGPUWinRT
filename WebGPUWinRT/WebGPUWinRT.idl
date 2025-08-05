@@ -734,10 +734,10 @@ namespace WebGPUWinRT
 
 	interface IGPUDevice requires Windows.Foundation.IClosable
 	{
-		//String Label { get; };
-		//IVectorView<GPUFeature> Features { get; };
+		//String Label { get; }; // Not available in native API
+		IVectorView<GPUFeature> Features { get; };
 		GPUSupportedLimits Limits { get; };
-		//GPUAdapterInfo AdapterInfo { get; };
+		GPUAdapterInfo AdapterInfo { get; };
 		//IGPUQueue Queue { get; };
 
 		// Device lost promise

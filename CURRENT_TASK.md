@@ -82,18 +82,54 @@ WebGPUWinRT/
 
 ## Required Tasks for Hello Triangle
 
-### Phase 1: Core Resource Creation
+### Phase 0: Complete Device Properties (Simpler First Task)
 
-#### Task 1.1: Implement IGPUQueue Interface and Device.Queue Property
+#### Task 0.1: Implement Missing GPUDevice Properties  
 **Files to modify:**
-- `WebGPUWinRT.idl`: Uncomment and define IGPUQueue interface
-- `GPUDevice.h/.cpp`: Add Queue property implementation
-- Create `GPUQueue.h/.cpp`: Basic queue wrapper
+- `WebGPUWinRT.idl`: Uncomment device property interfaces  
+- `GPUDevice.h/.cpp`: Add missing property implementations
+- `Interop.h/.cpp`: Add missing conversion functions if needed
+- Create `GPUQueue.h/.cpp`: Basic queue wrapper for Device.Queue property
+
+**Available Native APIs:**
+- `wgpuDeviceGetFeatures(WGPUDevice device, WGPUSupportedFeatures * features)` 
+- `wgpuDeviceGetAdapterInfo(WGPUDevice device)` → `WGPUAdapterInfo`
+- `wgpuDeviceGetQueue(WGPUDevice device)` → `WGPUQueue`
+- **Note**: Device label retrieval not available in native API (only set during creation)
 
 **Implementation:**
-- Add `IGPUQueue Queue { get; };` to IGPUDevice
-- Define IGPUQueue interface with Submit method
-- Wrap WGPUQueue handle in C++/WinRT class
+- Add `IVectorView<GPUFeature> Features { get; };` using `wgpuDeviceGetFeatures()`
+- Add `GPUAdapterInfo AdapterInfo { get; };` using `wgpuDeviceGetAdapterInfo()`
+- Add `IGPUQueue Queue { get; };` using `wgpuDeviceGetQueue()` (minimal wrapper for now)
+- Skip Label property for now (not supported by native API)
+- Add necessary interop conversions for features collection
+- Create basic GPUQueue class with just the WGPUQueue handle (other methods implemented later)
+
+**Testing:** 
+- Test each property returns correct values
+- Verify C# can access all device properties  
+- Compare with adapter properties for consistency
+- Test that Device.Features matches Adapter.Features (should be subset)
+- Verify Queue property returns non-null queue object
+
+### Phase 1: Core Resource Creation
+
+#### Task 1.1: Complete IGPUQueue Interface Implementation
+**Files to modify:**
+- `GPUQueue.h/.cpp`: Add remaining queue methods
+- `WebGPUWinRT.idl`: Ensure IGPUQueue interface is complete
+
+**Implementation:**
+- Add `Submit(IVectorView<IGPUCommandBuffer> commandBuffers)` method
+- Add `WriteBuffer()` method for direct buffer updates  
+- Add basic `OnSubmittedWorkDone()` async operation
+- Handle command buffer array submission to native API
+- Implement proper resource management and error handling
+
+**Testing:**
+- Test queue can be retrieved from device
+- Test WriteBuffer with simple data 
+- Verify proper cleanup and resource management
 
 #### Task 1.2: Implement GPUShaderModule Creation
 **Files to modify:**
