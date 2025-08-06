@@ -17,9 +17,18 @@ namespace winrt::WebGPUWinRT::implementation
 		winrt::Windows::Foundation::Collections::IVectorView<winrt::WebGPUWinRT::GPUFeature> Features();
 		GPUSupportedLimits Limits();
 		GPUAdapterInfo AdapterInfo();
+		winrt::WebGPUWinRT::IGPUQueue Queue();
+		
+		// Resource creation methods
+		winrt::WebGPUWinRT::IGPUBuffer CreateBuffer(winrt::WebGPUWinRT::GPUBufferDescriptor descriptor);
+		winrt::WebGPUWinRT::IGPUShaderModule CreateShaderModule(winrt::WebGPUWinRT::GPUShaderModuleDescriptor descriptor);
+		winrt::WebGPUWinRT::IGPUPipelineLayout CreatePipelineLayout(winrt::WebGPUWinRT::GPUPipelineLayoutDescriptor descriptor);
+		winrt::WebGPUWinRT::IGPURenderPipeline CreateRenderPipeline(winrt::WebGPUWinRT::GPURenderPipelineDescriptor descriptor);
+		winrt::WebGPUWinRT::IGPUCommandEncoder CreateCommandEncoder();
 		
 	private:
 		bool m_isClosed{ false };
+		winrt::WebGPUWinRT::IGPUQueue m_queue{ nullptr };
 	};
 }
 

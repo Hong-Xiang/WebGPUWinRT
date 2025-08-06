@@ -738,13 +738,13 @@ namespace WebGPUWinRT
 		IVectorView<GPUFeature> Features { get; };
 		GPUSupportedLimits Limits { get; };
 		GPUAdapterInfo AdapterInfo { get; };
-		//IGPUQueue Queue { get; };
+		IGPUQueue Queue { get; };
 
 		// Device lost promise
 		//Windows.Foundation.IAsyncOperation<GPUDeviceLostInfo> Lost { get; };
 
 		// Resource creation methods
-		//IGPUBuffer CreateBuffer(GPUBufferDescriptor descriptor);
+		IGPUBuffer CreateBuffer(GPUBufferDescriptor descriptor);
 		//IGPUTexture CreateTexture(GPUTextureDescriptor descriptor);
 		//IGPUSampler CreateSampler();
 		//IGPUSampler CreateSamplerWithDescriptor(GPUSamplerDescriptor descriptor);
@@ -752,18 +752,18 @@ namespace WebGPUWinRT
 
 		// Pipeline and binding creation
 		//IGPUBindGroupLayout CreateBindGroupLayout(GPUBindGroupLayoutDescriptor descriptor);
-		//IGPUPipelineLayout CreatePipelineLayout(GPUPipelineLayoutDescriptor descriptor);
+		IGPUPipelineLayout CreatePipelineLayout(GPUPipelineLayoutDescriptor descriptor);
 		//IGPUBindGroup CreateBindGroup(GPUBindGroupDescriptor descriptor);
 
 		// Shader and pipeline creation
-		//IGPUShaderModule CreateShaderModule(GPUShaderModuleDescriptor descriptor);
+		IGPUShaderModule CreateShaderModule(GPUShaderModuleDescriptor descriptor);
 		//IGPUComputePipeline CreateComputePipeline(GPUComputePipelineDescriptor descriptor);
-		//IGPURenderPipeline CreateRenderPipeline(GPURenderPipelineDescriptor descriptor);
+		IGPURenderPipeline CreateRenderPipeline(GPURenderPipelineDescriptor descriptor);
 		//Windows.Foundation.IAsyncOperation<IGPUComputePipeline> CreateComputePipelineAsync(GPUComputePipelineDescriptor descriptor);
 		//Windows.Foundation.IAsyncOperation<IGPURenderPipeline> CreateRenderPipelineAsync(GPURenderPipelineDescriptor descriptor);
 
 		// Command recording
-		//IGPUCommandEncoder CreateCommandEncoder();
+		IGPUCommandEncoder CreateCommandEncoder();
 		//IGPUCommandEncoder CreateCommandEncoderWithDescriptor(GPUCommandEncoderDescriptor descriptor);
 		//IGPURenderBundleEncoder CreateRenderBundleEncoder(GPURenderBundleEncoderDescriptor descriptor);
 
@@ -811,11 +811,38 @@ namespace WebGPUWinRT
 	};
 
 	[default_interface]
+	runtimeclass GPUVertexState {
+		String EntryPoint;
+		IGPUShaderModule Module;
+		// IVectorView<GPUVertexBufferLayout> Buffers; // Will be added later
+	};
+
+	[default_interface]
+	runtimeclass GPUFragmentState {
+		String EntryPoint;
+		IGPUShaderModule Module;
+		// IVectorView<GPUColorTargetState> Targets; // Will be added later
+	};
+
+	struct GPUPrimitiveState {
+		GPUPrimitiveTopology Topology;
+		// GPUIndexFormat StripIndexFormat; // Optional
+		GPUFrontFace FrontFace;
+		GPUCullMode CullMode;
+		Boolean UnclippedDepth;
+	};
+
+	[default_interface]
 	runtimeclass GPURenderPipelineDescriptor
 	{
 		GPURenderPipelineDescriptor();
 		String Label;
 		IGPUPipelineLayout Layout;
+		GPUVertexState Vertex;
+		GPUPrimitiveState Primitive;
+		GPUFragmentState Fragment;
+		// GPUDepthStencilState DepthStencil; // Will be added later
+		// GPUMultisampleState Multisample; // Will be added later
 	};
 
 	[default_interface]

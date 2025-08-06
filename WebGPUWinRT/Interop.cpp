@@ -159,4 +159,191 @@ namespace interop {
 		result.featureLevel = WGPUFeatureLevel_Core;
 		return result;
 	}
+
+	WGPUIndexFormat from(winrt::WebGPUWinRT::GPUIndexFormat format) {
+		switch (format) {
+		case winrt::WebGPUWinRT::GPUIndexFormat::Uint16:
+			return WGPUIndexFormat_Uint16;
+		case winrt::WebGPUWinRT::GPUIndexFormat::Uint32:
+			return WGPUIndexFormat_Uint32;
+		default:
+			return WGPUIndexFormat_Uint16;
+		}
+	}
+
+	WGPUShaderModuleDescriptor from(winrt::WebGPUWinRT::GPUShaderModuleDescriptor descriptor) {
+		auto labelStr = winrt::to_string(descriptor.Label);
+		auto codeStr = winrt::to_string(descriptor.Code);
+
+		auto result = WGPUShaderModuleDescriptor{};
+		result.label = labelStr.c_str();
+
+		// Create WGSL descriptor
+		WGPUShaderSourceWGSL wgslDesc{};
+		wgslDesc.chain.sType = WGPUSType_ShaderSourceWGSL;
+		wgslDesc.code = { .data = codeStr.c_str(), .length = codeStr.length() };
+		result.nextInChain = reinterpret_cast<WGPUChainedStruct*>(&wgslDesc);
+
+		return result;
+	}
+
+	WGPUBufferDescriptor from(winrt::WebGPUWinRT::GPUBufferDescriptor descriptor) {
+		auto labelStr = winrt::to_string(descriptor.Label);
+		auto result = WGPUBufferDescriptor{};
+		result.label = labelStr.c_str();
+		result.size = descriptor.Size;
+		result.usage = from(descriptor.Usage);
+		result.mappedAtCreation = descriptor.MappedAtCreation;
+		return result;
+	}
+
+	WGPUPipelineLayoutDescriptor from(winrt::WebGPUWinRT::GPUPipelineLayoutDescriptor descriptor) {
+		auto labelStr = winrt::to_string(descriptor.Label());
+		auto result = WGPUPipelineLayoutDescriptor{};
+		result.label = labelStr.c_str();
+
+		// For Hello Triangle, we'll start with empty bind group layouts
+		result.bindGroupLayoutCount = 0;
+		result.bindGroupLayouts = nullptr;
+
+		return result;
+	}
+	WGPUBufferUsage from(winrt::WebGPUWinRT::GPUBufferUsage usage) {
+		return static_cast<WGPUBufferUsage>(usage);
+	}
+
+	WGPURenderPipelineDescriptor from(winrt::WebGPUWinRT::GPURenderPipelineDescriptor descriptor) {
+		auto labelStr = winrt::to_string(descriptor.Label());
+		auto result = WGPURenderPipelineDescriptor{};
+		result.label = labelStr.c_str();
+
+		// Convert layout
+		if (descriptor.Layout()) {
+			auto layoutImpl = descriptor.Layout().as<implementation::GPUPipelineLayout>();
+			result.layout = layoutImpl->handle;
+		}
+
+		// Convert vertex state
+		result.vertex = from(descriptor.Vertex());
+
+		// Convert primitive state
+		result.primitive = from(descriptor.Primitive());
+
+		// Convert fragment state  
+		auto fragmentState = from(descriptor.Fragment());
+		result.fragment = &fragmentState;
+
+		return result;
+	}
+
+	WGPUVertexState from(winrt::WebGPUWinRT::GPUVertexState state) {
+		auto entryPointStr = winrt::to_string(state.EntryPoint);
+		auto result = WGPUVertexState{};
+		result.entryPoint = entryPointStr.c_str();
+
+		if (state.Module) {
+			auto moduleImpl = state.Module.get_self<implementation::GPUShaderModule>();
+			result.module = moduleImpl->handle;
+		}
+
+		// Buffers will be added later
+		result.bufferCount = 0;
+		result.buffers = nullptr;
+
+		return result;
+	}
+
+	WGPUFragmentState from(winrt::WebGPUWinRT::GPUFragmentState state) {
+		auto entryPointStr = winrt::to_string(state.EntryPoint);
+		auto result = WGPUFragmentState{};
+		result.entryPoint = entryPointStr.c_str();
+
+		if (state.Module) {
+			auto moduleImpl = state.Module.as<implementation::GPUShaderModule>();
+			result.module = moduleImpl->handle;
+		}
+
+		// Targets will be added later
+		result.targetCount = 0;
+		result.targets = nullptr;
+
+		return result;
+	}
+
+	WGPUPrimitiveState from(winrt::WebGPUWinRT::GPUPrimitiveState state) {
+		auto result = WGPUPrimitiveState{};
+
+		// Convert topology
+		switch (state.Topology) {
+		case winrt::WebGPUWinRT::GPUPrimitiveTopology::PointList:
+			result.topology = WGPUPrimitiveTopology_PointList;
+			break;
+		case winrt::WebGPUWinRT::GPUPrimitiveTopology::LineList:
+			result.topology = WGPUPrimitiveTopology_LineList;
+			break;
+		case winrt::WebGPUWinRT::GPUPrimitiveTopology::LineStrip:
+			result.topology = WGPUPrimitiveTopology_LineStrip;
+			break;
+		case winrt::WebGPUWinRT::GPUPrimitiveTopology::TriangleList:
+			result.topology = WGPUPrimitiveTopology_TriangleList;
+			break;
+		case winrt::WebGPUWinRT::GPUPrimitiveTopology::TriangleStrip:
+			result.topology = WGPUPrimitiveTopology_TriangleStrip;
+			break;
+		default:
+			result.topology = WGPUPrimitiveTopology_TriangleList;
+		}
+
+		// Convert front face
+		switch (state.FrontFace) {
+		case winrt::WebGPUWinRT::GPUFrontFace::CCW:
+			result.frontFace = WGPUFrontFace_CCW;
+			break;
+		case winrt::WebGPUWinRT::GPUFrontFace::CW:
+			result.frontFace = WGPUFrontFace_CW;
+			break;
+		default:
+			result.frontFace = WGPUFrontFace_CCW;
+		}
+
+		// Convert cull mode
+		switch (state.CullMode) {
+		case winrt::WebGPUWinRT::GPUCullMode::None:
+			result.cullMode = WGPUCullMode_None;
+			break;
+		case winrt::WebGPUWinRT::GPUCullMode::Front:
+			result.cullMode = WGPUCullMode_Front;
+			break;
+		case winrt::WebGPUWinRT::GPUCullMode::Back:
+			result.cullMode = WGPUCullMode_Back;
+			break;
+		default:
+			result.cullMode = WGPUCullMode_None;
+		}
+
+		result.unclippedDepth = state.UnclippedDepth;
+
+		return result;
+	}
+
+	WGPURenderPassDescriptor from(winrt::WebGPUWinRT::GPURenderPassDescriptor descriptor) {
+		auto labelStr = winrt::to_string(descriptor.Label());
+		auto result = WGPURenderPassDescriptor{};
+		result.label = labelStr.c_str();
+
+		// Basic implementation - will be completed when we have proper color attachments
+		// For now, just return empty descriptor
+		result.colorAttachmentCount = 0;
+		result.colorAttachments = nullptr;
+		result.depthStencilAttachment = nullptr;
+
+		return result;
+	}
+
+	WGPUCommandBufferDescriptor from(winrt::WebGPUWinRT::GPUCommandBufferDescriptor descriptor) {
+		auto result = WGPUCommandBufferDescriptor{};
+		auto labelStr = winrt::to_string(descriptor.Label);
+		result.label = labelStr.c_str();
+		return result;
+	}
 }

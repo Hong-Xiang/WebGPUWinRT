@@ -15,6 +15,18 @@ namespace interop {
 	WGPUDeviceDescriptor from(winrt::WebGPUWinRT::GPUDeviceDescriptor descriptor);
 	WGPUBackendType from(winrt::WebGPUWinRT::GPUBackendType backendType);
 	WGPUPowerPreference from(winrt::WebGPUWinRT::GPUPowerPreference powerPreference);
+	WGPUStringView from(winrt::hstring str);
+	WGPUIndexFormat from(winrt::WebGPUWinRT::GPUIndexFormat format);
+	WGPUShaderModuleDescriptor from(winrt::WebGPUWinRT::GPUShaderModuleDescriptor descriptor);
+	WGPUBufferDescriptor from(winrt::WebGPUWinRT::GPUBufferDescriptor descriptor);
+	WGPUPipelineLayoutDescriptor from(winrt::WebGPUWinRT::GPUPipelineLayoutDescriptor descriptor);
+	WGPURenderPipelineDescriptor from(winrt::WebGPUWinRT::GPURenderPipelineDescriptor descriptor);
+	WGPURenderPassDescriptor from(winrt::WebGPUWinRT::GPURenderPassDescriptor descriptor);
+	WGPUCommandBufferDescriptor from(winrt::WebGPUWinRT::GPUCommandBufferDescriptor descriptor);
+	WGPUVertexState from(winrt::WebGPUWinRT::GPUVertexState state);
+	WGPUFragmentState from(winrt::WebGPUWinRT::GPUFragmentState state);
+	WGPUPrimitiveState from(winrt::WebGPUWinRT::GPUPrimitiveState state);
+	WGPUBufferUsage from(winrt::WebGPUWinRT::GPUBufferUsage usage);
 
 	template<typename T>
 	winrt::Windows::Foundation::IAsyncOperation<typename T::result> from_async(
