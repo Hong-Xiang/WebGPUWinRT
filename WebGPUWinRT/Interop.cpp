@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Interop.h"
 #include <codecvt>
+#include "GPUShaderModule.h"
+#include "GPUPipelineLayout.h"
 
 namespace interop {
 
@@ -143,6 +145,14 @@ namespace interop {
 		return result;
 	}
 
+	WGPUStringView from(const std::string& str)
+	{
+		auto result = WGPUStringView{};
+		result.data = str.c_str();
+		result.length = str.length();
+		return result;
+	}
+
 	WGPUDeviceDescriptor from(winrt::WebGPUWinRT::GPUDeviceDescriptor descriptor)
 	{
 		auto result = WGPUDeviceDescriptor{
@@ -176,12 +186,12 @@ namespace interop {
 		auto codeStr = winrt::to_string(descriptor.Code);
 
 		auto result = WGPUShaderModuleDescriptor{};
-		result.label = labelStr.c_str();
+		result.label = from(labelStr);
 
 		// Create WGSL descriptor
 		WGPUShaderSourceWGSL wgslDesc{};
 		wgslDesc.chain.sType = WGPUSType_ShaderSourceWGSL;
-		wgslDesc.code = { .data = codeStr.c_str(), .length = codeStr.length() };
+		wgslDesc.code = from(codeStr);
 		result.nextInChain = reinterpret_cast<WGPUChainedStruct*>(&wgslDesc);
 
 		return result;
@@ -190,7 +200,7 @@ namespace interop {
 	WGPUBufferDescriptor from(winrt::WebGPUWinRT::GPUBufferDescriptor descriptor) {
 		auto labelStr = winrt::to_string(descriptor.Label);
 		auto result = WGPUBufferDescriptor{};
-		result.label = labelStr.c_str();
+		result.label = from(labelStr);
 		result.size = descriptor.Size;
 		result.usage = from(descriptor.Usage);
 		result.mappedAtCreation = descriptor.MappedAtCreation;
@@ -200,7 +210,7 @@ namespace interop {
 	WGPUPipelineLayoutDescriptor from(winrt::WebGPUWinRT::GPUPipelineLayoutDescriptor descriptor) {
 		auto labelStr = winrt::to_string(descriptor.Label());
 		auto result = WGPUPipelineLayoutDescriptor{};
-		result.label = labelStr.c_str();
+		result.label = from(labelStr);
 
 		// For Hello Triangle, we'll start with empty bind group layouts
 		result.bindGroupLayoutCount = 0;
@@ -215,11 +225,11 @@ namespace interop {
 	WGPURenderPipelineDescriptor from(winrt::WebGPUWinRT::GPURenderPipelineDescriptor descriptor) {
 		auto labelStr = winrt::to_string(descriptor.Label());
 		auto result = WGPURenderPipelineDescriptor{};
-		result.label = labelStr.c_str();
+		result.label = from(labelStr);
 
 		// Convert layout
 		if (descriptor.Layout()) {
-			auto layoutImpl = descriptor.Layout().as<implementation::GPUPipelineLayout>();
+			auto layoutImpl = descriptor.Layout().as<winrt::WebGPUWinRT::implementation::GPUPipelineLayout>();
 			result.layout = layoutImpl->handle;
 		}
 
@@ -237,12 +247,12 @@ namespace interop {
 	}
 
 	WGPUVertexState from(winrt::WebGPUWinRT::GPUVertexState state) {
-		auto entryPointStr = winrt::to_string(state.EntryPoint);
+		auto entryPointStr = winrt::to_string(state.EntryPoint());
 		auto result = WGPUVertexState{};
-		result.entryPoint = entryPointStr.c_str();
+		result.entryPoint = from(entryPointStr);
 
-		if (state.Module) {
-			auto moduleImpl = state.Module.get_self<implementation::GPUShaderModule>();
+		if (state.Module()) {
+			auto moduleImpl = winrt::get_self<winrt::WebGPUWinRT::implementation::GPUShaderModule>(state.Module());
 			result.module = moduleImpl->handle;
 		}
 
@@ -254,12 +264,12 @@ namespace interop {
 	}
 
 	WGPUFragmentState from(winrt::WebGPUWinRT::GPUFragmentState state) {
-		auto entryPointStr = winrt::to_string(state.EntryPoint);
+		auto entryPointStr = winrt::to_string(state.EntryPoint());
 		auto result = WGPUFragmentState{};
-		result.entryPoint = entryPointStr.c_str();
+		result.entryPoint = from(entryPointStr);
 
-		if (state.Module) {
-			auto moduleImpl = state.Module.as<implementation::GPUShaderModule>();
+		if (state.Module()) {
+			auto moduleImpl = winrt::get_self<winrt::WebGPUWinRT::implementation::GPUShaderModule>(state.Module());
 			result.module = moduleImpl->handle;
 		}
 
@@ -329,7 +339,7 @@ namespace interop {
 	WGPURenderPassDescriptor from(winrt::WebGPUWinRT::GPURenderPassDescriptor descriptor) {
 		auto labelStr = winrt::to_string(descriptor.Label());
 		auto result = WGPURenderPassDescriptor{};
-		result.label = labelStr.c_str();
+		result.label = from(labelStr);
 
 		// Basic implementation - will be completed when we have proper color attachments
 		// For now, just return empty descriptor
@@ -342,8 +352,8 @@ namespace interop {
 
 	WGPUCommandBufferDescriptor from(winrt::WebGPUWinRT::GPUCommandBufferDescriptor descriptor) {
 		auto result = WGPUCommandBufferDescriptor{};
-		auto labelStr = winrt::to_string(descriptor.Label);
-		result.label = labelStr.c_str();
+		auto labelStr = winrt::to_string(descriptor.Label());
+		result.label = from(labelStr);
 		return result;
 	}
 }

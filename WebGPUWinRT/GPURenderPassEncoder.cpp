@@ -9,7 +9,7 @@ namespace winrt::WebGPUWinRT::implementation
 {
 	GPURenderPassEncoder::GPURenderPassEncoder(WGPURenderPassEncoder handle) : handle(handle) {
 		if (handle) {
-			wgpuRenderPassEncoderReference(handle);
+			wgpuRenderPassEncoderAddRef(handle);
 		}
 	}
 	

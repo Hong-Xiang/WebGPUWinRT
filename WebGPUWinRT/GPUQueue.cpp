@@ -9,7 +9,7 @@ namespace winrt::WebGPUWinRT::implementation
 {
 	GPUQueue::GPUQueue(WGPUQueue handle) : handle(handle) {
 		if (handle) {
-			wgpuQueueReference(handle);
+			wgpuQueueAddRef(handle);
 		}
 	}
 	

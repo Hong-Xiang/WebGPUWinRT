@@ -7,7 +7,7 @@ namespace winrt::WebGPUWinRT::implementation
 {
 	GPURenderPipeline::GPURenderPipeline(WGPURenderPipeline handle) : handle(handle) {
 		if (handle) {
-			wgpuRenderPipelineReference(handle);
+			wgpuRenderPipelineAddRef(handle);
 		}
 	}
 	

@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<CsWinRTIncludes>WebGPUWinRT</CsWinRTIncludes>
 		<CsWinRTGeneratedFilesDir>$(OutDir)</CsWinRTGeneratedFilesDir>
-		<Platforms>AnyCPU;x64</Platforms>
+		<Platforms>x64</Platforms>
 		<GeneratedNugetDir>.\nuget\</GeneratedNugetDir>
 		<NuspecFile>$(GeneratedNugetDir)WebGPUWinRT.Projection.nuspec</NuspecFile>
 		<OutputPath>$(NugetOutDir)</OutputPath>

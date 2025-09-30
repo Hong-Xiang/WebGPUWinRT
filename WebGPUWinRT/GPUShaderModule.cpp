@@ -7,7 +7,7 @@ namespace winrt::WebGPUWinRT::implementation
 {
 	GPUShaderModule::GPUShaderModule(WGPUShaderModule handle) : handle(handle) {
 		if (handle) {
-			wgpuShaderModuleReference(handle);
+			wgpuShaderModuleAddRef(handle);
 		}
 	}
 	

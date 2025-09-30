@@ -9,7 +9,7 @@ namespace winrt::WebGPUWinRT::implementation
 {
 	GPUCommandEncoder::GPUCommandEncoder(WGPUCommandEncoder handle) : handle(handle) {
 		if (handle) {
-			wgpuCommandEncoderReference(handle);
+			wgpuCommandEncoderAddRef(handle);
 		}
 	}
 	

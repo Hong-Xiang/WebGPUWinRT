@@ -7,7 +7,7 @@ namespace winrt::WebGPUWinRT::implementation
 {
 	GPUCommandBuffer::GPUCommandBuffer(WGPUCommandBuffer handle) : handle(handle) {
 		if (handle) {
-			wgpuCommandBufferReference(handle);
+			wgpuCommandBufferAddRef(handle);
 		}
 	}
 	

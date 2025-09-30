@@ -7,7 +7,7 @@ namespace winrt::WebGPUWinRT::implementation
 {
 	GPUPipelineLayout::GPUPipelineLayout(WGPUPipelineLayout handle) : handle(handle) {
 		if (handle) {
-			wgpuPipelineLayoutReference(handle);
+			wgpuPipelineLayoutAddRef(handle);
 		}
 	}
 	

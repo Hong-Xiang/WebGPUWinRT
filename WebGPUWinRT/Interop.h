@@ -16,6 +16,7 @@ namespace interop {
 	WGPUBackendType from(winrt::WebGPUWinRT::GPUBackendType backendType);
 	WGPUPowerPreference from(winrt::WebGPUWinRT::GPUPowerPreference powerPreference);
 	WGPUStringView from(winrt::hstring str);
+	WGPUStringView from(const std::string& str);
 	WGPUIndexFormat from(winrt::WebGPUWinRT::GPUIndexFormat format);
 	WGPUShaderModuleDescriptor from(winrt::WebGPUWinRT::GPUShaderModuleDescriptor descriptor);
 	WGPUBufferDescriptor from(winrt::WebGPUWinRT::GPUBufferDescriptor descriptor);

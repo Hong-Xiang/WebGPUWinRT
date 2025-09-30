@@ -7,7 +7,7 @@ namespace winrt::WebGPUWinRT::implementation
 {
 	GPUBuffer::GPUBuffer(WGPUBuffer handle) : handle(handle) {
 		if (handle) {
-			wgpuBufferReference(handle);
+			wgpuBufferAddRef(handle);
 			m_size = wgpuBufferGetSize(handle);
 			m_usage = static_cast<winrt::WebGPUWinRT::GPUBufferUsage>(wgpuBufferGetUsage(handle));
 		}
