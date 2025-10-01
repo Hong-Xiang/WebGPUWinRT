@@ -97,6 +97,30 @@ export class WebIDLToCSharpVisitor extends BaseIDLVisitor<void> {
       this.builder.addComment(`Includes mixin: ${mixin}`);
     });
 
+    // Check for setlike/maplike/iterable declarations
+    node.members.forEach((member: any) => {
+      if (member.type === 'setlike') {
+        const type = mapWebIDLTypeToCSharp(member.idlType[0]);
+        baseTypes.push(`setlike<${type}>`);
+        if (member.readonly) {
+          this.builder.addAttribute('WebIDLReadonlySetlike');
+        }
+        this.builder.addComment(`${member.readonly ? 'readonly ' : ''}setlike<${type}>`);
+      } else if (member.type === 'maplike') {
+        const keyType = mapWebIDLTypeToCSharp(member.idlType[0]);
+        const valueType = mapWebIDLTypeToCSharp(member.idlType[1]);
+        baseTypes.push(`maplike<${keyType}, ${valueType}>`);
+        if (member.readonly) {
+          this.builder.addAttribute('WebIDLReadonlyMaplike');
+        }
+        this.builder.addComment(`${member.readonly ? 'readonly ' : ''}maplike<${keyType}, ${valueType}>`);
+      } else if (member.type === 'iterable') {
+        const types = member.idlType.map((t: any) => mapWebIDLTypeToCSharp(t));
+        // Add attribute with type information
+        this.builder.addComment(`iterable<${types.join(', ')}>`);
+      }
+    });
+
     if (baseTypes.length > 0) {
       declaration += ` : ${baseTypes.join(", ")}`;
     }
@@ -104,8 +128,11 @@ export class WebIDLToCSharpVisitor extends BaseIDLVisitor<void> {
     this.builder.addLine(declaration);
     this.builder.openBrace();
 
-    // Process members
+    // Process members (skip setlike/maplike/iterable as they're handled above)
     node.members.forEach((member) => {
+      if (member.type === 'setlike' || member.type === 'maplike' || member.type === 'iterable') {
+        return; // Already handled
+      }
       const memberCode = this.visitInterfaceMember(member);
       if (memberCode) {
         this.builder.addLine(memberCode);
@@ -113,8 +140,6 @@ export class WebIDLToCSharpVisitor extends BaseIDLVisitor<void> {
     });
 
     this.builder.closeBrace();
-
-    return this.builder.toString();
   }
 
   /**
@@ -200,11 +225,22 @@ export class WebIDLToCSharpVisitor extends BaseIDLVisitor<void> {
     const targetType = mapWebIDLTypeToCSharp(node.idlType);
 
     // Check if it's a union type
-    if (node.idlType.union) {
+    if (node.idlType.union && Array.isArray(node.idlType.idlType)) {
       // Generate an abstract class for union types
       this.builder.addLine();
       this.builder.addXmlDoc(`Union typedef: ${node.name}`);
-      this.builder.addAttribute("WebIDLUnion");
+      
+      // Add WebIDLUnion attribute with type arguments
+      const unionTypes = node.idlType.idlType
+        .map((t: any) => {
+          const typeName = mapWebIDLTypeToCSharp(t);
+          // Remove nullable suffix for typeof
+          const cleanTypeName = typeName.replace(/\?$/, '');
+          return `typeof(${cleanTypeName})`;
+        })
+        .join(', ');
+      this.builder.addAttribute("WebIDLUnion", [unionTypes]);
+      
       this.builder.addLine(
         `public abstract class ${escapeCSharpName(node.name)}`
       );
@@ -259,7 +295,7 @@ export class WebIDLToCSharpVisitor extends BaseIDLVisitor<void> {
     this.builder.openBrace();
 
     // Process members
-    node.members.forEach((member) => {
+    node.members.forEach((member: any) => {
       if (member.type === "operation") {
         const methodCode = this.generateOperation(member, true);
         if (methodCode) {
@@ -269,6 +305,11 @@ export class WebIDLToCSharpVisitor extends BaseIDLVisitor<void> {
         const propCode = this.generateAttribute(member, true);
         if (propCode) {
           this.builder.addLine(propCode);
+        }
+      } else if (member.type === "const") {
+        const constCode = this.generateConstant(member);
+        if (constCode) {
+          this.builder.addLine(constCode);
         }
       }
     });
@@ -465,6 +506,20 @@ export class WebIDLToCSharpVisitor extends BaseIDLVisitor<void> {
     const type = mapWebIDLTypeToCSharp(field.idlType);
     const name = escapeCSharpName(field.name);
     let result = "";
+    
+    // Add WebIDLUnion attribute for union types with type arguments
+    if (field.idlType.union && Array.isArray(field.idlType.idlType)) {
+      const unionTypes = field.idlType.idlType
+        .map((t: any) => {
+          const typeName = mapWebIDLTypeToCSharp(t);
+          // Remove nullable suffix for typeof
+          const cleanTypeName = typeName.replace(/\?$/, '');
+          return `typeof(${cleanTypeName})`;
+        })
+        .join(', ');
+      result += `[WebIDLUnion(${unionTypes})]\n`;
+    }
+    
     if (needsNullableAttribute(field.idlType)) {
       result += "[WebIDLNullable]\n";
     }
@@ -493,9 +548,23 @@ export class WebIDLToCSharpVisitor extends BaseIDLVisitor<void> {
   private addExtendedAttributesAsCSharp(
     extAttrs: webidl.ExtendedAttribute[]
   ): void {
-    extAttrs.forEach((attr) => {
-      if (attr.name === "Exposed" || attr.name === "SecureContext") {
+    extAttrs.forEach((attr: any) => {
+      if (attr.name === "SecureContext") {
         this.builder.addAttribute(`WebIDL${attr.name}`);
+      } else if (attr.name === "Exposed") {
+            // Exposed can have parameters like (Window, Worker)
+            if (attr.rhs && attr.rhs.type === 'identifier-list' && Array.isArray(attr.rhs.value)) {
+              const contexts = attr.rhs.value.map((v: any) => `"${v.value}"`);
+              this.builder.addAttribute(`WebIDLExposed`, contexts);
+            } else if (attr.rhs && attr.rhs.value) {
+              this.builder.addAttribute(`WebIDLExposed`, ["\"" + attr.rhs.value + "\""]);
+            } else {
+              this.builder.addAttribute(`WebIDLExposed`);
+            }
+      } else if (attr.name === "Serializable") {
+        this.builder.addAttribute(`WebIDLSerializable`);
+      } else if (attr.name === "NewObject") {
+        this.builder.addAttribute(`WebIDLNewObject`);
       }
     });
   }

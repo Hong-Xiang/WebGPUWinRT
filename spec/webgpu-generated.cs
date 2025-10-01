@@ -24,7 +24,7 @@ using WebIDL;
 /*
  * Auto-generated from WebIDL specification
  * Do not modify this file manually
- * Generated: 2025-10-01T14:44:53.152Z
+ * Generated: 2025-10-01T15:24:56.131Z
  */
 
 namespace WebGPU;
@@ -49,7 +49,7 @@ public class GPUObjectDescriptorBase
 /// <summary>
 /// Interface: GPUSupportedLimits
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPUSupportedLimits
 {
@@ -89,27 +89,29 @@ public interface GPUSupportedLimits
 /// <summary>
 /// Interface: GPUSupportedFeatures
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
-public interface GPUSupportedFeatures
+[WebIDLReadonlySetlike]
+// readonly setlike<string>
+public interface GPUSupportedFeatures : setlike<string>
 {
-    // : ISetlike<string>
 }
 
 /// <summary>
 /// Interface: WGSLLanguageFeatures
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
-public interface WGSLLanguageFeatures
+[WebIDLReadonlySetlike]
+// readonly setlike<string>
+public interface WGSLLanguageFeatures : setlike<string>
 {
-    // : ISetlike<string>
 }
 
 /// <summary>
 /// Interface: GPUAdapterInfo
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPUAdapterInfo
 {
@@ -133,7 +135,7 @@ public interface NavigatorGPU
 /// <summary>
 /// Interface: GPU
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPU
 {
@@ -168,7 +170,7 @@ public enum GPUPowerPreference
 /// <summary>
 /// Interface: GPUAdapter
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPUAdapter
 {
@@ -240,7 +242,7 @@ public enum GPUFeatureName
 /// <summary>
 /// Interface: GPUDevice
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUDevice : EventTarget, GPUObjectBase
@@ -270,7 +272,7 @@ public interface GPUDevice : EventTarget, GPUObjectBase
 /// <summary>
 /// Interface: GPUBuffer
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUBuffer : GPUObjectBase
@@ -310,6 +312,16 @@ public class GPUBufferDescriptor : GPUObjectDescriptorBase
 /// </summary>
 public static class GPUBufferUsage
 {
+    public const uint MAP_READ = 0x0001;
+    public const uint MAP_WRITE = 0x0002;
+    public const uint COPY_SRC = 0x0004;
+    public const uint COPY_DST = 0x0008;
+    public const uint INDEX = 0x0010;
+    public const uint VERTEX = 0x0020;
+    public const uint UNIFORM = 0x0040;
+    public const uint STORAGE = 0x0080;
+    public const uint INDIRECT = 0x0100;
+    public const uint QUERY_RESOLVE = 0x0200;
 }
 
 /// <summary>
@@ -317,12 +329,14 @@ public static class GPUBufferUsage
 /// </summary>
 public static class GPUMapMode
 {
+    public const uint READ = 0x0001;
+    public const uint WRITE = 0x0002;
 }
 
 /// <summary>
 /// Interface: GPUTexture
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUTexture : GPUObjectBase
@@ -372,12 +386,17 @@ public enum GPUTextureDimension
 /// </summary>
 public static class GPUTextureUsage
 {
+    public const uint COPY_SRC = 0x01;
+    public const uint COPY_DST = 0x02;
+    public const uint TEXTURE_BINDING = 0x04;
+    public const uint STORAGE_BINDING = 0x08;
+    public const uint RENDER_ATTACHMENT = 0x10;
 }
 
 /// <summary>
 /// Interface: GPUTextureView
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUTextureView : GPUObjectBase
@@ -599,7 +618,7 @@ public enum GPUTextureFormat
 /// <summary>
 /// Interface: GPUExternalTexture
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUExternalTexture : GPUObjectBase
@@ -611,14 +630,15 @@ public interface GPUExternalTexture : GPUObjectBase
 /// </summary>
 public class GPUExternalTextureDescriptor : GPUObjectDescriptorBase
 {
-    public required object /* Union: HTMLVideoElement | VideoFrame */ source { get; set; }
+    [WebIDLUnion(typeof(HTMLVideoElement), typeof(VideoFrame))]
+public required object /* Union: HTMLVideoElement | VideoFrame */ source { get; set; }
     public PredefinedColorSpace colorSpace { get; set; } = PredefinedColorSpace.srgb;
 }
 
 /// <summary>
 /// Interface: GPUSampler
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUSampler : GPUObjectBase
@@ -697,7 +717,7 @@ public enum GPUCompareFunction
 /// <summary>
 /// Interface: GPUBindGroupLayout
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUBindGroupLayout : GPUObjectBase
@@ -731,6 +751,9 @@ public class GPUBindGroupLayoutEntry
 /// </summary>
 public static class GPUShaderStage
 {
+    public const uint VERTEX = 0x1;
+    public const uint FRAGMENT = 0x2;
+    public const uint COMPUTE = 0x4;
 }
 
 /// <summary>
@@ -835,7 +858,7 @@ public class GPUExternalTextureBindingLayout
 /// <summary>
 /// Interface: GPUBindGroup
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUBindGroup : GPUObjectBase
@@ -854,7 +877,7 @@ public class GPUBindGroupDescriptor : GPUObjectDescriptorBase
 /// <summary>
 /// Union typedef: GPUBindingResource
 /// </summary>
-[WebIDLUnion]
+[WebIDLUnion(typeof(GPUSampler), typeof(GPUTexture), typeof(GPUTextureView), typeof(GPUBuffer), typeof(GPUBufferBinding), typeof(GPUExternalTexture))]
 public abstract class GPUBindingResource
 {
     // Union type members would be generated here
@@ -882,7 +905,7 @@ public class GPUBufferBinding
 /// <summary>
 /// Interface: GPUPipelineLayout
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUPipelineLayout : GPUObjectBase
@@ -900,7 +923,7 @@ public class GPUPipelineLayoutDescriptor : GPUObjectDescriptorBase
 /// <summary>
 /// Interface: GPUShaderModule
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUShaderModule : GPUObjectBase
@@ -923,7 +946,8 @@ public class GPUShaderModuleDescriptor : GPUObjectDescriptorBase
 public class GPUShaderModuleCompilationHint
 {
     public required string entryPoint { get; set; }
-    public object /* Union: GPUPipelineLayout | GPUAutoLayoutMode */ layout { get; set; }
+    [WebIDLUnion(typeof(GPUPipelineLayout), typeof(GPUAutoLayoutMode))]
+public object /* Union: GPUPipelineLayout | GPUAutoLayoutMode */ layout { get; set; }
 }
 
 /// <summary>
@@ -940,7 +964,8 @@ public enum GPUCompilationMessageType
 /// <summary>
 /// Interface: GPUCompilationMessage
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
+[WebIDLSerializable]
 [WebIDLSecureContext]
 public interface GPUCompilationMessage
 {
@@ -955,7 +980,8 @@ public interface GPUCompilationMessage
 /// <summary>
 /// Interface: GPUCompilationInfo
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
+[WebIDLSerializable]
 [WebIDLSecureContext]
 public interface GPUCompilationInfo
 {
@@ -965,8 +991,9 @@ public interface GPUCompilationInfo
 /// <summary>
 /// Interface: GPUPipelineError
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
+[WebIDLSerializable]
 public interface GPUPipelineError : DOMException
 {
     // [Constructor] attribute
@@ -1006,7 +1033,8 @@ public enum GPUAutoLayoutMode
 /// </summary>
 public class GPUPipelineDescriptorBase : GPUObjectDescriptorBase
 {
-    public required object /* Union: GPUPipelineLayout | GPUAutoLayoutMode */ layout { get; set; }
+    [WebIDLUnion(typeof(GPUPipelineLayout), typeof(GPUAutoLayoutMode))]
+public required object /* Union: GPUPipelineLayout | GPUAutoLayoutMode */ layout { get; set; }
 }
 
 /// <summary>
@@ -1031,7 +1059,7 @@ public Record<string, double> constants { get; set; } = default;
 /// <summary>
 /// Interface: GPUComputePipeline
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 // Includes mixin: GPUPipelineBase
@@ -1050,7 +1078,7 @@ public class GPUComputePipelineDescriptor : GPUPipelineDescriptorBase
 /// <summary>
 /// Interface: GPURenderPipeline
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 // Includes mixin: GPUPipelineBase
@@ -1165,6 +1193,11 @@ public class GPUBlendState
 /// </summary>
 public static class GPUColorWrite
 {
+    public const uint RED = 0x1;
+    public const uint GREEN = 0x2;
+    public const uint BLUE = 0x4;
+    public const uint ALPHA = 0x8;
+    public const uint ALL = 0xF;
 }
 
 /// <summary>
@@ -1418,7 +1451,7 @@ public class GPUCopyExternalImageDestInfo : GPUTexelCopyTextureInfo
 /// <summary>
 /// Union typedef: GPUCopyExternalImageSource
 /// </summary>
-[WebIDLUnion]
+[WebIDLUnion(typeof(ImageBitmap), typeof(ImageData), typeof(HTMLImageElement), typeof(HTMLVideoElement), typeof(VideoFrame), typeof(HTMLCanvasElement), typeof(OffscreenCanvas))]
 public abstract class GPUCopyExternalImageSource
 {
     // Union type members would be generated here
@@ -1438,7 +1471,7 @@ public GPUOrigin2D origin { get; set; } = default;
 /// <summary>
 /// Interface: GPUCommandBuffer
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUCommandBuffer : GPUObjectBase
@@ -1462,7 +1495,7 @@ public interface GPUCommandsMixin
 /// <summary>
 /// Interface: GPUCommandEncoder
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 // Includes mixin: GPUCommandsMixin
@@ -1510,7 +1543,7 @@ public interface GPUDebugCommandsMixin
 /// <summary>
 /// Interface: GPUComputePassEncoder
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 // Includes mixin: GPUCommandsMixin
@@ -1545,7 +1578,7 @@ public class GPUComputePassDescriptor : GPUObjectDescriptorBase
 /// <summary>
 /// Interface: GPURenderPassEncoder
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 // Includes mixin: GPUCommandsMixin
@@ -1591,9 +1624,11 @@ public class GPURenderPassDescriptor : GPUObjectDescriptorBase
 /// </summary>
 public class GPURenderPassColorAttachment
 {
-    public required object /* Union: GPUTexture | GPUTextureView */ view { get; set; }
+    [WebIDLUnion(typeof(GPUTexture), typeof(GPUTextureView))]
+public required object /* Union: GPUTexture | GPUTextureView */ view { get; set; }
     public uint depthSlice { get; set; }
-    public object /* Union: GPUTexture | GPUTextureView */ resolveTarget { get; set; }
+    [WebIDLUnion(typeof(GPUTexture), typeof(GPUTextureView))]
+public object /* Union: GPUTexture | GPUTextureView */ resolveTarget { get; set; }
     public GPUColor clearValue { get; set; }
     public required GPULoadOp loadOp { get; set; }
     public required GPUStoreOp storeOp { get; set; }
@@ -1604,7 +1639,8 @@ public class GPURenderPassColorAttachment
 /// </summary>
 public class GPURenderPassDepthStencilAttachment
 {
-    public required object /* Union: GPUTexture | GPUTextureView */ view { get; set; }
+    [WebIDLUnion(typeof(GPUTexture), typeof(GPUTextureView))]
+public required object /* Union: GPUTexture | GPUTextureView */ view { get; set; }
     public float depthClearValue { get; set; }
     public GPULoadOp depthLoadOp { get; set; }
     public GPUStoreOp depthStoreOp { get; set; }
@@ -1662,7 +1698,7 @@ public interface GPURenderCommandsMixin
 /// <summary>
 /// Interface: GPURenderBundle
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPURenderBundle : GPUObjectBase
@@ -1679,7 +1715,7 @@ public class GPURenderBundleDescriptor : GPUObjectDescriptorBase
 /// <summary>
 /// Interface: GPURenderBundleEncoder
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 // Includes mixin: GPUCommandsMixin
@@ -1710,7 +1746,7 @@ public class GPUQueueDescriptor : GPUObjectDescriptorBase
 /// <summary>
 /// Interface: GPUQueue
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUQueue : GPUObjectBase
@@ -1725,7 +1761,7 @@ public interface GPUQueue : GPUObjectBase
 /// <summary>
 /// Interface: GPUQuerySet
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 // Includes mixin: GPUObjectBase
 public interface GPUQuerySet : GPUObjectBase
@@ -1757,7 +1793,7 @@ public enum GPUQueryType
 /// <summary>
 /// Interface: GPUCanvasContext
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPUCanvasContext
 {
@@ -1824,7 +1860,7 @@ public enum GPUDeviceLostReason
 /// <summary>
 /// Interface: GPUDeviceLostInfo
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPUDeviceLostInfo
 {
@@ -1835,7 +1871,7 @@ public interface GPUDeviceLostInfo
 /// <summary>
 /// Interface: GPUError
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPUError
 {
@@ -1845,7 +1881,7 @@ public interface GPUError
 /// <summary>
 /// Interface: GPUValidationError
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPUValidationError : GPUError
 {
@@ -1855,7 +1891,7 @@ public interface GPUValidationError : GPUError
 /// <summary>
 /// Interface: GPUOutOfMemoryError
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPUOutOfMemoryError : GPUError
 {
@@ -1865,7 +1901,7 @@ public interface GPUOutOfMemoryError : GPUError
 /// <summary>
 /// Interface: GPUInternalError
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPUInternalError : GPUError
 {
@@ -1888,7 +1924,7 @@ public enum GPUErrorFilter
 /// <summary>
 /// Interface: GPUUncapturedErrorEvent
 /// </summary>
-[WebIDLExposed]
+[WebIDLExposed("Window", "Worker")]
 [WebIDLSecureContext]
 public interface GPUUncapturedErrorEvent : Event
 {
@@ -1918,7 +1954,7 @@ public class GPUColorDict
 /// <summary>
 /// Union typedef: GPUColor
 /// </summary>
-[WebIDLUnion]
+[WebIDLUnion(typeof(Sequence<double>), typeof(GPUColorDict))]
 public abstract class GPUColor
 {
     // Union type members would be generated here
@@ -1936,7 +1972,7 @@ public class GPUOrigin2DDict
 /// <summary>
 /// Union typedef: GPUOrigin2D
 /// </summary>
-[WebIDLUnion]
+[WebIDLUnion(typeof(Sequence<uint>), typeof(GPUOrigin2DDict))]
 public abstract class GPUOrigin2D
 {
     // Union type members would be generated here
@@ -1955,7 +1991,7 @@ public class GPUOrigin3DDict
 /// <summary>
 /// Union typedef: GPUOrigin3D
 /// </summary>
-[WebIDLUnion]
+[WebIDLUnion(typeof(Sequence<uint>), typeof(GPUOrigin3DDict))]
 public abstract class GPUOrigin3D
 {
     // Union type members would be generated here
@@ -1974,7 +2010,7 @@ public class GPUExtent3DDict
 /// <summary>
 /// Union typedef: GPUExtent3D
 /// </summary>
-[WebIDLUnion]
+[WebIDLUnion(typeof(Sequence<uint>), typeof(GPUExtent3DDict))]
 public abstract class GPUExtent3D
 {
     // Union type members would be generated here

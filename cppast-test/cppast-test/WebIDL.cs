@@ -18,20 +18,61 @@ public class WebIDLNullableAttribute : Attribute { }
 public class WebIDLOrUndefinedAttribute : Attribute { }
 
 [AttributeUsage(AttributeTargets.All)]
-public class WebIDLUnionAttribute : Attribute { }
+public class WebIDLUnionAttribute : Attribute
+{
+    public Type[] Types { get; }
+    public WebIDLUnionAttribute(params Type[] types) { Types = types; }
+}
 
 [AttributeUsage(AttributeTargets.All)]
 public class WebIDLCallbackInterfaceAttribute : Attribute { }
 
 [AttributeUsage(AttributeTargets.All)]
-public class WebIDLExposedAttribute : Attribute { }
+public class WebIDLExposedAttribute : Attribute
+{
+    public string[] Contexts { get; }
+    public WebIDLExposedAttribute(params string[] contexts) { Contexts = contexts; }
+}
 
 [AttributeUsage(AttributeTargets.All)]
 public class WebIDLSecureContextAttribute : Attribute { }
 
 [AttributeUsage(AttributeTargets.All)]
-public class WebIDLNewObjectDefaultValueAttribute : Attribute
+public class WebIDLNewObjectDefaultValueAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.All)]
+public class WebIDLSerializableAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.All)]
+public class WebIDLNewObjectAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.All)]
+public class WebIDLAllowSharedAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.All)]
+public class WebIDLClampAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.All)]
+public class WebIDLEnforceRangeAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.All)]
+public class WebIDLTypedefAttribute : Attribute
 {
+    public Type OriginalType { get; }
+    public WebIDLTypedefAttribute(Type originalType) { OriginalType = originalType; }
+}
+
+[AttributeUsage(AttributeTargets.All)]
+public class WebIDLReadonlySetlikeAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.All)]
+public class WebIDLReadonlyMaplikeAttribute : Attribute { }
+
+[AttributeUsage(AttributeTargets.All)]
+public class WebIDLIterableAttribute : Attribute
+{
+    public Type[] Types { get; }
+    public WebIDLIterableAttribute(params Type[] types) { Types = types; }
 }
 
 
